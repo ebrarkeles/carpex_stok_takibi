@@ -41,13 +41,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void navigateToDeviceListPage() {
     if (selectedCustomer != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              QrDeviceListPage(selectedCustomer: selectedCustomer!),
-        ),
-      );
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  QrDeviceListPage(selectedCustomer: selectedCustomer!)),
+          (Route<dynamic> route) => false);
     } else {
       showDialog(
         context: context,
@@ -69,9 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.grey[300],
         appBar: AppBar(
-          //backgroundColor: Constants.themeColor,
+          backgroundColor: Constants.themeColor,
           title: const Text("Stok Takip"),
         ),
         body: Padding(
@@ -93,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedCustomer = newValue;
+                        Constants.musteri = newValue!;
                       });
                     },
                     items: musteriler.map((String customer) {
@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text(customer),
                       );
                     }).toList(),
-                    dropdownColor: Colors.white60,
+                    dropdownColor: Colors.white,
                   ),
                 ],
               ),

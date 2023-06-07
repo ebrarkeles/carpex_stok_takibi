@@ -1,7 +1,9 @@
+import 'package:carpex_stok_takibi/page/okutma_sayfasi.dart';
 import 'package:carpex_stok_takibi/widgets/cihaz_listesi.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
+import '../constants/data_helpar.dart';
 
 class QrDeviceListPage extends StatefulWidget {
   final String selectedCustomer;
@@ -15,7 +17,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         // backgroundColor: Constants.themeColor,
         title: const Text('Cihaz Listesi'),
@@ -30,7 +32,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
               padding: const EdgeInsets.all(16),
               child: Center(
                 child: Text(
-                  'Seçilen Müşteri: ${widget.selectedCustomer}',
+                  'Seçilen Müşteri: ${Constants.musteri.toString()}',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -45,7 +47,14 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                 buttonMinWidth: 200,
                 children: [
                   ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    QrScanPage()),
+                            (Route<dynamic> route) => false);
+                      },
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(170, 45),
                       ),

@@ -12,13 +12,63 @@ class Qr_List extends StatefulWidget {
 }
 
 class _Qr_ListState extends State<Qr_List> {
+  List<Cihaz> tumQrEklenenCihazlar = Constants.tumEklenenCihazlar;
+
+  void removeDevice(Cihaz cihaz) {
+    setState(() {
+      tumQrEklenenCihazlar.remove(cihaz);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Cihaz> tumQrEklenenCihazlar = Constants.tumEklenenCihazlar;
     if (tumQrEklenenCihazlar.isNotEmpty) {
-      return Center(child: Text("Buraya Liste Gelecek"));
+      return ListView.builder(
+        itemCount: tumQrEklenenCihazlar.length,
+        itemBuilder: (context, index) {
+          Cihaz cihaz = tumQrEklenenCihazlar[index];
+          return ListTile(
+            title: Text('CRP-${cihaz.cihazKodu}'),
+            trailing: IconButton(
+              icon:
+                  Icon(Icons.delete, color: Colors.red[900]?.withOpacity(0.6)),
+              onPressed: () {
+                showDeleteConfirmationDialog(cihaz);
+              },
+            ),
+          );
+        },
+      );
     } else {
       return Center(child: Text("Liste Boş"));
     }
+  }
+
+  void showDeleteConfirmationDialog(Cihaz cihaz) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Cihazı Sil'),
+          content: Text(
+              'CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // İletişim kutusunu kapat
+              },
+              child: Text('İptal'),
+            ),
+            TextButton(
+              onPressed: () {
+                removeDevice(cihaz); // Cihazı listeden sil
+                Navigator.pop(context); // İletişim kutusunu kapat
+              },
+              child: Text('Sil'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

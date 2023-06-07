@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class Constants {
   Constants._();
 
-  static Color themeColor = Colors.black87;
+  static Color themeColor = Colors.blueGrey;
 
   static List<Cihaz> tumEklenenCihazlar = [];
+  static String musteri = '';
 }
