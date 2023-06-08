@@ -1,4 +1,5 @@
 import 'package:carpex_stok_takibi/constants/constants.dart';
+import 'package:carpex_stok_takibi/page/login_page.dart';
 import 'package:carpex_stok_takibi/page/qr_device_list_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const MyHomePage(),
+      home: const LoginPage(),
     );
   }
 }

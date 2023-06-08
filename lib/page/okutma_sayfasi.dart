@@ -98,10 +98,6 @@ class _QrScanPageState extends State<QrScanPage> {
                       if (scannedCode.isNotEmpty) {
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         _addDeviceToCihazlar(scannedCode);
-                        // final snackBar = SnackBar(
-                        //   content: Text('Okutulan cihaz listeye eklendi.'),
-                        // );
-                        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
                         showDialog(
                           context: context,
@@ -168,6 +164,7 @@ class _QrScanPageState extends State<QrScanPage> {
       });
 
       // EKLENDİ snacki göster
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text('Cihaz listeye eklendi!'),
@@ -176,98 +173,3 @@ class _QrScanPageState extends State<QrScanPage> {
     }
   }
 }
-
-/*
-// ignore_for_file: library_private_types_in_public_api
-
-import 'package:carpex_stok_takibi/constants/constants.dart';
-import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
-
-import '../constants/data_helpar.dart';
-
-class QrScanPage extends StatefulWidget {
-  const QrScanPage({super.key});
-
-  @override
-  _QrScanPageState createState() => _QrScanPageState();
-}
-
-class _QrScanPageState extends State<QrScanPage> {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  QRViewController? controller;
-  String scannedCode = '';
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('QR Okut'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 5,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Text('Taranan Kod: $scannedCode'),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (scannedCode.isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Uyarı'),
-                    content: Text('Eklemek için taranan bir cihaz kodu yok.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Tamam'),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                _addDeviceToCihazlar(scannedCode);
-              }
-            },
-            child: Text('Cihazı Ekle'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        scannedCode = scanData.code!;
-      });
-    });
-  }
-
-  void _addDeviceToCihazlar(String deviceCode) {
-    Cihaz newDevice = Cihaz(deviceCode);
-    Constants.tumEklenenCihazlar.add(newDevice);
-    // tumQrEklenenCihazlar listesini güncelleme işlemleri
-  }
-}
-
-*/

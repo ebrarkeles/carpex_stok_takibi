@@ -1,3 +1,4 @@
+import 'package:carpex_stok_takibi/page/finish_page.dart';
 import 'package:carpex_stok_takibi/page/okutma_sayfasi.dart';
 import 'package:carpex_stok_takibi/widgets/cihaz_listesi.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,9 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                       ),
                       child: Text("Qr Okut")),
                   ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _showConfirmationDialog();
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[400],
                           minimumSize: Size(170, 45)),
@@ -71,6 +74,44 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+              '${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('İşlemi gerçekleştirmek istediğinizden emin misiniz?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Hayır'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Evet'),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => FinishPage()),
+                    (Route<dynamic> route) => false);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
