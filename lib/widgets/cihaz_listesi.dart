@@ -23,24 +23,46 @@ class _Qr_ListState extends State<Qr_List> {
   @override
   Widget build(BuildContext context) {
     if (tumQrEklenenCihazlar.isNotEmpty) {
-      return ListView.builder(
-        itemCount: tumQrEklenenCihazlar.length,
-        itemBuilder: (context, index) {
-          Cihaz cihaz = tumQrEklenenCihazlar[index];
-          return ListTile(
-            title: Text('CRP-${cihaz.cihazKodu}'),
-            trailing: IconButton(
-              icon:
-                  Icon(Icons.delete, color: Colors.red[900]?.withOpacity(0.6)),
-              onPressed: () {
-                showDeleteConfirmationDialog(cihaz);
+      return Container(
+        width: 350,
+        height: 480,
+        color: Colors.white,
+        child: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: tumQrEklenenCihazlar.length,
+              itemBuilder: (context, index) {
+                Cihaz cihaz = tumQrEklenenCihazlar[index];
+                return ListTile(
+                  title: Text('CRP-${cihaz.cihazKodu}'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete,
+                        color: Colors.red[900]?.withOpacity(0.6)),
+                    onPressed: () {
+                      showDeleteConfirmationDialog(cihaz);
+                    },
+                  ),
+                );
               },
             ),
-          );
-        },
+          ),
+        ),
       );
     } else {
-      return Center(child: Text("Liste Boş"));
+      return Container(
+        width: 350,
+        height: 480,
+        color: Colors.white,
+        child: Center(
+          child: Text(
+            "Liste Boş",
+            style: TextStyle(color: Colors.black87),
+          ),
+        ),
+      );
     }
   }
 
@@ -49,7 +71,7 @@ class _Qr_ListState extends State<Qr_List> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Cihazı Sil'),
+          title: const Text('Cihazı Sil'),
           content: Text(
               'CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
           actions: [
@@ -57,14 +79,14 @@ class _Qr_ListState extends State<Qr_List> {
               onPressed: () {
                 Navigator.pop(context); // İletişim kutusunu kapat
               },
-              child: Text('İptal'),
+              child: const Text('İptal'),
             ),
             TextButton(
               onPressed: () {
                 removeDevice(cihaz); // Cihazı listeden sil
                 Navigator.pop(context); // İletişim kutusunu kapat
               },
-              child: Text('Sil'),
+              child: const Text('Sil'),
             ),
           ],
         );

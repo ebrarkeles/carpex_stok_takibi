@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, unnecessary_string_interpolations, unnecessary_null_comparison
 
 import 'package:carpex_stok_takibi/constants/constants.dart';
 import 'package:carpex_stok_takibi/page/qr_device_list_page.dart';
@@ -22,14 +22,14 @@ class _QrScanPageState extends State<QrScanPage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: const Text('QR Okut'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
-            padding: const EdgeInsets.all(50),
+            padding:
+                const EdgeInsets.only(top: 50, bottom: 35, left: 35, right: 35),
             child: Column(
               children: [
                 Align(
@@ -37,20 +37,21 @@ class _QrScanPageState extends State<QrScanPage> {
                     child: Row(
                       children: [
                         const Text(
-                          'Taranan Kod:',
+                          'Okutulan cihaz kodu:',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Colors.grey,
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.w700),
                         ),
-                        const SizedBox(width: 35),
+                        const SizedBox(width: 30),
                         Text(
-                          "$scannedCode",
-                          style: TextStyle(fontSize: 26, color: Colors.black),
+                          "$scannedCode".toString(),
+                          style: const TextStyle(
+                              fontSize: 25, color: Colors.black),
                         ),
                       ],
                     )),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
@@ -60,7 +61,7 @@ class _QrScanPageState extends State<QrScanPage> {
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       _scanQRCode();
                     },
-                    child: const Text('QR Kodu Tara'),
+                    child: const Text('Sevkiyat İçin Qr Kodu Okutun'),
                   ),
                 ),
               ],
@@ -77,7 +78,7 @@ class _QrScanPageState extends State<QrScanPage> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Constants.themeColor.withOpacity(0.6),
-                          minimumSize: Size(150, 40)),
+                          minimumSize: const Size(150, 40)),
                       onPressed: () {
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         Navigator.pushAndRemoveUntil(
@@ -88,10 +89,10 @@ class _QrScanPageState extends State<QrScanPage> {
                                         selectedCustomer: Constants.musteri)),
                             (Route<dynamic> route) => false);
                       },
-                      child: Text("Listeye Dön")),
+                      child: const Text("Listeye Dön")),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size(150, 40),
+                      minimumSize: const Size(150, 40),
                       backgroundColor: Colors.green[400],
                     ),
                     onPressed: () {
@@ -147,13 +148,14 @@ class _QrScanPageState extends State<QrScanPage> {
     // Kontrol ett cihazın var mı
     bool isDeviceExists = Constants.tumEklenenCihazlar
         .any((cihaz) => cihaz.cihazKodu == deviceCode);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     if (isDeviceExists) {
       // Cihaz zaten var uyarı snacki göster
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Cihaz zaten eklenmiş, tekrar eklenemez!'),
+            content: const Text('Cihaz zaten eklenmiş, tekrar eklenemez!'),
             backgroundColor: Colors.red[900]?.withOpacity(0.6)),
       );
     } else {
@@ -167,7 +169,7 @@ class _QrScanPageState extends State<QrScanPage> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Cihaz listeye eklendi!'),
+            content: const Text('Cihaz listeye eklendi!'),
             backgroundColor: Colors.green[600]?.withOpacity(0.6)),
       );
     }

@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Carpex Stok Takibi',
       theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+        primarySwatch: Colors.blue,
       ),
       home: const LoginPage(),
     );
@@ -37,7 +37,10 @@ class _MyHomePageState extends State<MyHomePage> {
     'Starbucks',
     'Gesk Technology',
     'Petrol Ofisi',
-    'Rass Technology'
+    'Rass Technology',
+    'Burger King',
+    'Kahve Dünyası',
+    'Kültür Üniversitesi',
   ];
 
   void navigateToDeviceListPage() {
@@ -52,12 +55,12 @@ class _MyHomePageState extends State<MyHomePage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Hata'),
-          content: Text('Müşteri seçimi yapmadınız!'),
+          title: const Text('Hata'),
+          content: const Text('Müşteri seçimi yapmadınız!'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Tamam'),
+              child: const Text('Tamam'),
             ),
           ],
         ),
@@ -70,66 +73,113 @@ class _MyHomePageState extends State<MyHomePage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey[300],
-        appBar: AppBar(
-          backgroundColor: Constants.themeColor,
-          title: const Text("Stok Takip"),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              Row(
-                children: [
-                  const SizedBox(width: 40),
-                  Text(
-                    'Müşteri',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(width: 40),
-                  DropdownButton<String>(
-                    hint: Text('Müşteri Seçin'),
-                    value: selectedCustomer,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedCustomer = newValue;
-                        Constants.musteri = newValue!;
-                      });
-                    },
-                    items: musteriler.map((String customer) {
-                      return DropdownMenuItem<String>(
-                        value: customer,
-                        child: Text(customer),
-                      );
-                    }).toList(),
-                    dropdownColor: Colors.white,
-                  ),
-                ],
+        body: Column(
+          children: [
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(bottom: Radius.circular(30)),
+              child: Container(
+                height: 90,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/carpex_koku_logo.png"),
+                      alignment: Alignment.center),
+                ),
               ),
-              SizedBox(height: 600),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  selectedCustomer != null
-                      ? Text(
-                          'Seçilen müşteri: $selectedCustomer',
-                          style: TextStyle(fontSize: 16),
-                        )
-                      : Text('Seçilen müşteri: Müşteri Seçilmedi'),
-                  ElevatedButton(
-                      onPressed: () {
-                        navigateToDeviceListPage();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 5,
-                        minimumSize: Size(100, 45),
-                        backgroundColor: Constants.themeColor,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 150,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 60),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: DropdownButton<String>(
+                                  padding: EdgeInsets.all(9),
+                                  iconEnabledColor: Colors.black,
+                                  menuMaxHeight: 400,
+                                  iconSize: 28,
+                                  isExpanded: true,
+                                  hint: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Müşteri Seçiniz',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                  value: selectedCustomer,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedCustomer = newValue;
+                                      Constants.musteri = newValue!;
+                                    });
+                                  },
+                                  items: musteriler.map((String customer) {
+                                    return DropdownMenuItem<String>(
+                                      value: customer,
+                                      child: Text(
+                                        "    $customer",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 20),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  dropdownColor: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      child: Text("Devam"))
-                ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 80),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // selectedCustomer != null ? Text(
+                          //         'Seçilen müşteri: $selectedCustomer',
+                          //         style: const TextStyle(fontSize: 16),
+                          //       )
+                          //     : const Text('Seçilen müşteri: Müşteri Seçilmedi'),
+                          ElevatedButton(
+                              onPressed: () {
+                                navigateToDeviceListPage();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 5,
+                                minimumSize: const Size(300, 45),
+                                backgroundColor: Colors.green[400],
+                              ),
+                              child: const Text("Devam"))
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

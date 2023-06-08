@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     if (username == 'admin' && password == '123456') {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MyHomePage()),
+        MaterialPageRoute(builder: (context) => const MyHomePage()),
       );
     } else {
       setState(() {
@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: MediaQuery.of(context).size.width,
                     child: Align(
                         alignment: Alignment.center,
-                        child: Text("Cihaz Gönderme Uygulaması",
+                        child: Text("Cihaz Sevk",
                             style: TextStyle(
                                 fontSize: 25,
                                 color: Colors.blue[700],
@@ -88,9 +88,11 @@ class _LoginPageState extends State<LoginPage> {
                     TextFormField(
                       controller: _usernameController,
                       decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
                         enabledBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(width: 1.5, color: Colors.grey),
+                              const BorderSide(width: 1.5, color: Colors.grey),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         labelText: 'Kullanıcı Adı',
@@ -147,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                       visible: hasError,
                       child: Text(
                         errorPasswordMessage,
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                     const SizedBox(height: 25),
@@ -168,17 +170,17 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.center,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            minimumSize: Size(350, 45)),
+                            minimumSize: const Size(350, 45)),
                         onPressed: () {
                           _login();
                         },
-                        child: Text('Giriş Yap'),
+                        child: const Text('Giriş Yap'),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       _errorMessage,
-                      style: TextStyle(color: Colors.red),
+                      style: const TextStyle(color: Colors.red),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
