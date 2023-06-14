@@ -23,43 +23,79 @@ class _Qr_ListState extends State<Qr_List> {
   @override
   Widget build(BuildContext context) {
     if (tumQrEklenenCihazlar.isNotEmpty) {
-      return Container(
-        width: 350,
-        height: 480,
-        color: Colors.white,
+      return Expanded(
         child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: tumQrEklenenCihazlar.length,
-              itemBuilder: (context, index) {
-                Cihaz cihaz = tumQrEklenenCihazlar[index];
-                return ListTile(
-                  title: Text('CRP-${cihaz.cihazKodu}'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete,
-                        color: Colors.red[900]?.withOpacity(0.6)),
-                    onPressed: () {
-                      showDeleteConfirmationDialog(cihaz);
+          width: MediaQuery.of(context).size.width,
+          color: Colors.transparent,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: tumQrEklenenCihazlar.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Cihaz cihaz = tumQrEklenenCihazlar[index];
+                      return Card(
+                        borderOnForeground: true,
+                        child: ListTile(
+                          title: Text(
+                            '${index + 1}.  CRP-${cihaz.cihazKodu.replaceAll(' ', '')}'
+                                .toString(),
+                            style: const TextStyle(letterSpacing: 0.90),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete,
+                                color: Colors.red[900]?.withOpacity(0.6)),
+                            onPressed: () {
+                              showDeleteConfirmationDialog(cihaz);
+                            },
+                          ),
+                        ),
+                      );
                     },
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Text(
+                  "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
+                  style: const TextStyle(color: Colors.black54),
+                ),
+              )
+            ],
           ),
         ),
       );
     } else {
-      return Container(
-        width: 350,
-        height: 480,
-        color: Colors.white,
-        child: Center(
-          child: Text(
-            "Liste Boş",
-            style: TextStyle(color: Colors.black87),
+      return Expanded(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: Text(
+                      "Liste Boş",
+                      style: TextStyle(color: Colors.black87),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Text(
+                  "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
+                  style: const TextStyle(color: Colors.black54),
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -94,3 +130,40 @@ class _Qr_ListState extends State<Qr_List> {
     );
   }
 }
+
+
+/*
+return Padding(
+        padding: const EdgeInsets.all(40),
+        child: Container(
+          width: 350,
+          height: 480,
+          color: Colors.white,
+          child: Column(
+            children: [
+              SizedBox(),
+              ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: tumQrEklenenCihazlar.length,
+                itemBuilder: (context, index) {
+                  Cihaz cihaz = tumQrEklenenCihazlar[index];
+                  return Card(
+                    child: ListTile(
+                      title: Text('CRP-${cihaz.cihazKodu}'),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete,
+                            color: Colors.red[900]?.withOpacity(0.6)),
+                        onPressed: () {
+                          showDeleteConfirmationDialog(cihaz);
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Container(),
+            ],
+          ),
+        ),
+      );
+      */

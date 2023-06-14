@@ -1,9 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+
+import 'package:carpex_stok_takibi/main.dart';
 import 'package:carpex_stok_takibi/page/finish_page.dart';
 import 'package:carpex_stok_takibi/widgets/cihaz_listesi.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/constants.dart';
 import 'okutma_sayfasi_güncel.dart';
+import 'package:http/http.dart' as http;
 
 class QrDeviceListPage extends StatefulWidget {
   final String selectedCustomer;
@@ -14,75 +21,132 @@ class QrDeviceListPage extends StatefulWidget {
 }
 
 class _QrDeviceListPageState extends State<QrDeviceListPage> {
+  SharedPreferences? prefs;
+  void sendDevicesApi() async {
+    prefs = await SharedPreferences.getInstance();
+    print('prefs.get("username") ${prefs!.get("username")}');
+    print('prefs.get("password") ${prefs!.get("password")}');
+    var listem = [];
+    for (var i = 0; i < Constants.tumEklenenCihazlar.length; i++) {
+      print(Constants.tumEklenenCihazlar[i].cihazKodu);
+      listem.add(
+          "CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}"
+              .toString());
+    }
+
+    var body = {
+      "username": prefs!.get("username").toString(),
+      "buyer_id": Constants.musteri.toString(),
+      "devices": listem
+    };
+    print("body1 : ${body}");
+    print("body2 : ${json.encode(body)}");
+    try {
+      String basicAuth =
+          'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
+      print(basicAuth);
+
+      http.Response response = await http.post(
+          Uri.parse("http://95.70.201.96:39050/api/device-transaction/"),
+          body: json.encode(body),
+          headers: <String, String>{
+            'authorization': basicAuth,
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
+
+      print("11111111111 ${response.body}");
+
+      if (response.statusCode == 200) {
+        print("2222222222 ${response.body}");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => const FinishPage()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        print('başarısız');
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Cihaz gönderme başarısız!',
+              style: TextStyle(fontSize: 18),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 85,
+            ),
+            duration: Duration(milliseconds: 800),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
-          // backgroundColor: Constants.themeColor,
+          backgroundColor: Constants.themeColor,
           title: const Text('Cihaz Listesi'),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => const MyHomePage()),
+                (Route<dynamic> route) => false,
+              );
+            },
+            icon: Icon(
+              Icons.arrow_back_rounded,
+            ),
+          ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16),
+          padding:
+              const EdgeInsets.only(right: 40, left: 40, top: 16, bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 30, right: 30, left: 30, bottom: 40),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Row(
-                    children: [
-                      const Text('Müşteri:',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54)),
-                      const SizedBox(width: 35),
-                      Text(
-                        Constants.musteri.toString(),
-                        style: const TextStyle(
-                          fontSize: 23,
-                        ),
-                      ),
-                    ],
-                  ),
+              Container(
+                margin: EdgeInsets.only(top: 10, bottom: 20),
+                child: Row(
+                  children: [
+                    const Text('Müşteri:',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black)),
+                    const SizedBox(width: 15),
+                    Text(
+                      Constants.musteri.toString(),
+                      style: const TextStyle(
+                          fontSize: 23, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
               ),
-
-              Expanded(
-                  child: Column(
-                children: [
-                  const Qr_List(),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20, left: 20),
-                    child: Container(
-                        color: Colors.white,
-                        height: 50,
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Text(
-                              "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
-                              style: const TextStyle(color: Colors.black54),
-                            ),
-                          ),
-                        )),
-                  )
-                ],
-              )),
-              // SizedBox(height: 600),
+              Qr_List(),
               Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 40),
-                child: ButtonBar(
-                  alignment: MainAxisAlignment.center,
-                  buttonMinWidth: 200,
+                padding: const EdgeInsets.only(top: 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
+                    SizedBox(
+                      width: 100,
+                      height: 40,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Constants.themeColor),
                         onPressed: () {
                           Navigator.pushAndRemoveUntil(
                               context,
@@ -91,18 +155,22 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                                       const QRScannerPage()),
                               (Route<dynamic> route) => false);
                         },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(170, 45),
-                        ),
-                        child: const Text("Qr Okut")),
-                    ElevatedButton(
-                        onPressed: () {
-                          _showConfirmationDialog();
-                        },
-                        style: ElevatedButton.styleFrom(
+                        child: const Text("Qr Okut"),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    SizedBox(
+                      width: 100,
+                      height: 40,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _showConfirmationDialog();
+                          },
+                          style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green[400],
-                            minimumSize: const Size(170, 45)),
-                        child: const Text("Gönder")),
+                          ),
+                          child: const Text("Gönder")),
+                    ),
                   ],
                 ),
               )
@@ -165,12 +233,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
               TextButton(
                 child: const Text('Evet'),
                 onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => const FinishPage()),
-                    (Route<dynamic> route) => false,
-                  );
+                  sendDevicesApi();
                 },
               ),
             ],
