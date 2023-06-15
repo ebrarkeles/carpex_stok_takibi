@@ -25,14 +25,21 @@ class _Qr_ListState extends State<Qr_List> {
     if (tumQrEklenenCihazlar.isNotEmpty) {
       return Expanded(
         child: Container(
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
           width: MediaQuery.of(context).size.width,
-          color: Colors.transparent,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
                 child: Container(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: Colors.grey),
+                    color: Colors.white,
+                  ),
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     itemCount: tumQrEklenenCihazlar.length,
@@ -74,12 +81,19 @@ class _Qr_ListState extends State<Qr_List> {
       return Expanded(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          color: Colors.transparent,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Column(
             children: [
               Expanded(
                 child: Container(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                    border: Border.all(width: 1, color: Colors.grey),
+                  ),
                   child: Center(
                     child: Text(
                       "Liste Boş",

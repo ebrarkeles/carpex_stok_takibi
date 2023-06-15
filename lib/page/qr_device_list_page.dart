@@ -87,6 +87,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     }
   }
 
+  final scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -111,25 +113,55 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
         ),
         body: Padding(
           padding:
-              const EdgeInsets.only(right: 40, left: 40, top: 16, bottom: 16),
+              const EdgeInsets.only(right: 40, left: 40, top: 8, bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
                 margin: EdgeInsets.only(top: 10, bottom: 20),
-                child: Row(
+                child: Column(
                   children: [
-                    const Text('Müşteri:',
-                        style: TextStyle(
-                            fontSize: 20,
+                    const Row(
+                      children: [
+                        Text(
+                          'Müşteri',
+                          style: TextStyle(
+                            fontSize: 13,
                             fontWeight: FontWeight.normal,
-                            color: Colors.black)),
-                    const SizedBox(width: 15),
-                    Text(
-                      Constants.musteri.toString(),
-                      style: const TextStyle(
-                          fontSize: 23, fontWeight: FontWeight.bold),
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(width: 1, color: Colors.grey),
+                        color: Colors.white,
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(13),
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              Text(
+                                Constants.musteri.toString(),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                ),
+                                overflow: TextOverflow.fade,
+                                softWrap: false,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
