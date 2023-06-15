@@ -3,6 +3,7 @@
 import 'package:carpex_stok_takibi/constants/constants.dart';
 import 'package:carpex_stok_takibi/constants/data_helpar.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class Qr_List extends StatefulWidget {
   const Qr_List({super.key});
@@ -22,98 +23,70 @@ class _Qr_ListState extends State<Qr_List> {
 
   @override
   Widget build(BuildContext context) {
-    if (tumQrEklenenCihazlar.isNotEmpty) {
-      return Expanded(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+    return Expanded(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
           ),
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.grey),
-                    color: Colors.white,
-                  ),
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: tumQrEklenenCihazlar.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Cihaz cihaz = tumQrEklenenCihazlar[index];
-                      return Card(
-                        borderOnForeground: true,
-                        child: ListTile(
-                          title: Text(
-                            '${index + 1}.  CRP-${cihaz.cihazKodu.replaceAll(' ', '')}'
-                                .toString(),
-                            style: const TextStyle(letterSpacing: 0.90),
-                          ),
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete,
-                                color: Colors.red[900]?.withOpacity(0.6)),
-                            onPressed: () {
-                              showDeleteConfirmationDialog(cihaz);
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 10),
-                child: Text(
-                  "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
-                  style: const TextStyle(color: Colors.black54),
-                ),
-              )
-            ],
-          ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xffDDDDDD),
+              blurRadius: 6.0,
+              spreadRadius: 2.0,
+              offset: Offset(0.0, 0.0),
+            )
+          ],
         ),
-      );
-    } else {
-      return Expanded(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                    border: Border.all(width: 1, color: Colors.grey),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Liste Boş",
-                      style: TextStyle(color: Colors.black87),
+        child: tumQrEklenenCihazlar.isEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Lottie.asset(
+                      'assets/lottie/not_found_device_list.json',
                     ),
                   ),
-                ),
+                  const SizedBox(height: 0),
+                  const Text(
+                    "Gösterilecek cihaz yok.",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13,
+                      color: Color.fromRGBO(43, 114, 176, 1),
+                    ),
+                  ),
+                ],
+              )
+            : ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: tumQrEklenenCihazlar.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Cihaz cihaz = tumQrEklenenCihazlar[index];
+                  return Card(
+                    borderOnForeground: true,
+                    child: ListTile(
+                      title: Text(
+                        '${index + 1}.  CRP-${cihaz.cihazKodu.replaceAll(' ', '')}'.toString(),
+                        style: const TextStyle(letterSpacing: 0.90),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red[900]?.withOpacity(0.6)),
+                        onPressed: () {
+                          showDeleteConfirmationDialog(cihaz);
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
-              Container(
-                margin: EdgeInsets.only(top: 10),
-                child: Text(
-                  "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
-                  style: const TextStyle(color: Colors.black54),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
 
   void showDeleteConfirmationDialog(Cihaz cihaz) {
@@ -122,8 +95,7 @@ class _Qr_ListState extends State<Qr_List> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Cihazı Sil'),
-          content: Text(
-              'CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
+          content: Text('CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
           actions: [
             TextButton(
               onPressed: () {

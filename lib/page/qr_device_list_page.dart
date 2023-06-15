@@ -1,9 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:convert';
 
 import 'package:carpex_stok_takibi/main.dart';
 import 'package:carpex_stok_takibi/page/finish_page.dart';
+import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
 import 'package:carpex_stok_takibi/widgets/cihaz_listesi.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +23,14 @@ class QrDeviceListPage extends StatefulWidget {
 
 class _QrDeviceListPageState extends State<QrDeviceListPage> {
   SharedPreferences? prefs;
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.text = Constants.musteri.toString();
+  }
+
   void sendDevicesApi() async {
     prefs = await SharedPreferences.getInstance();
     print('prefs.get("username") ${prefs!.get("username")}');
@@ -29,30 +38,20 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     var listem = [];
     for (var i = 0; i < Constants.tumEklenenCihazlar.length; i++) {
       print(Constants.tumEklenenCihazlar[i].cihazKodu);
-      listem.add(
-          "CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}"
-              .toString());
+      listem.add("CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}".toString());
     }
 
-    var body = {
-      "username": prefs!.get("username").toString(),
-      "buyer_id": Constants.musteri.toString(),
-      "devices": listem
-    };
+    var body = {"username": prefs!.get("username").toString(), "buyer_id": Constants.musteri.toString(), "devices": listem};
     print("body1 : ${body}");
     print("body2 : ${json.encode(body)}");
     try {
-      String basicAuth =
-          'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
+      String basicAuth = 'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
       print(basicAuth);
 
-      http.Response response = await http.post(
-          Uri.parse("http://95.70.201.96:39050/api/device-transaction/"),
-          body: json.encode(body),
-          headers: <String, String>{
-            'authorization': basicAuth,
-            'Content-Type': 'application/json; charset=UTF-8',
-          });
+      http.Response response = await http.post(Uri.parse("http://95.70.201.96:39050/api/device-transaction/"), body: json.encode(body), headers: <String, String>{
+        'authorization': basicAuth,
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
 
       print("11111111111 ${response.body}");
 
@@ -60,8 +59,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
         print("2222222222 ${response.body}");
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => const FinishPage()),
+          MaterialPageRoute(builder: (BuildContext context) => const FinishPage()),
           (Route<dynamic> route) => false,
         );
       } else {
@@ -78,7 +76,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
             margin: EdgeInsets.only(
               bottom: MediaQuery.of(context).size.height - 85,
             ),
-            duration: Duration(milliseconds: 800),
+            duration: const Duration(milliseconds: 800),
           ),
         );
       }
@@ -89,123 +87,161 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
 
   final scrollController = ScrollController();
 
+  Future<bool> showExitPopupHandle() => showExitPopup(context);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.grey[300],
-        appBar: AppBar(
-          backgroundColor: Constants.themeColor,
-          title: const Text('Cihaz Listesi'),
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => const MyHomePage()),
-                (Route<dynamic> route) => false,
-              );
-            },
-            icon: Icon(
-              Icons.arrow_back_rounded,
+      child: WillPopScope(
+        onWillPop: showExitPopupHandle,
+        child: Scaffold(
+          backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
+          appBar: AppBar(
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Constants.themeColor,
+            title: const Text(
+              "Cihaz Listesi",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) => const MyHomePage()),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              icon: const Icon(
+                Icons.arrow_back_rounded,
+              ),
             ),
           ),
-        ),
-        body: Padding(
-          padding:
-              const EdgeInsets.only(right: 40, left: 40, top: 8, bottom: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          body: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 20),
-                child: Column(
-                  children: [
-                    const Row(
-                      children: [
-                        Text(
-                          'Müşteri',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(width: 1, color: Colors.grey),
-                        color: Colors.white,
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      child: Padding(
-                        padding: const EdgeInsets.all(13),
-                        child: SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              Text(
-                                Constants.musteri.toString(),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                                overflow: TextOverflow.fade,
-                                softWrap: false,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center,
+                height: 55,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 6,
+                      offset: Offset(0, 1),
                     ),
                   ],
+                ),
+                child: TextFormField(
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    floatingLabelAlignment: FloatingLabelAlignment.center,
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    errorBorder: UnderlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
                 ),
               ),
-              Qr_List(),
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      height: 40,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Constants.themeColor),
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const QRScannerPage()),
-                              (Route<dynamic> route) => false);
-                        },
-                        child: const Text("Qr Okut"),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15, left: 15, top: 8, bottom: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        height: 35,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Cihaz Listesi",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
+                              style: const TextStyle(color: Colors.black54),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 20),
-                    SizedBox(
-                      width: 100,
-                      height: 40,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            _showConfirmationDialog();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green[400],
-                          ),
-                          child: const Text("Gönder")),
-                    ),
-                  ],
+                      const Qr_List(),
+                      Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green[400],
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const QRScannerPage()), (Route<dynamic> route) => false);
+                                  },
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.qr_code_scanner_rounded),
+                                      Container(margin: const EdgeInsets.only(left: 6), child: const Text("Qr Okut")),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    _showConfirmationDialog();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(43, 114, 176, 1),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(margin: const EdgeInsets.only(right: 6), child: const Text("Gönder")),
+                                      const Icon(Icons.send_rounded),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -224,8 +260,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
             content: const SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  Text(
-                      'Sevk edilecek bir cihaz bulunamadı. Lütfen önce cihaz ekleyiniz.'),
+                  Text('Sevk edilecek bir cihaz bulunamadı. Lütfen önce cihaz ekleyiniz.'),
                 ],
               ),
             ),
@@ -246,8 +281,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(
-                '${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
+            title: Text('${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
             content: const SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
