@@ -127,144 +127,230 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  List<String> denemeList = [
+    'Apple',
+    'Banana',
+    'Cherry',
+    'Durian',
+    'Elderberry',
+    'Fig',
+    'Grape',
+    'Honeydew',
+    'Jackfruit',
+    'Kiwi',
+    'Lemon',
+    'Mango',
+    'Nectarine',
+    'Orange',
+    'Papaya',
+    'Quince',
+    'Raspberry',
+    'Strawberry',
+    'Tangerine',
+    'Ugli fruit',
+    'Watermelon',
+    "sdsad",
+    "assfsa",
+    "wfasfs",
+    "awdafsf",
+    "a",
+    "sffsafsa",
+    "sfasf",
+    "sfafds",
+    "afasf",
+    "wsas",
+    "afasf",
+    "asf",
+    "c",
+    "dfcz",
+    "saffsd",
+    "sdfas",
+    "f",
+    "afsfa",
+    "afsfx",
+    "asfsd"
+  ];
+
+  List<String> filteredList = [];
+
+  TextEditingController searchController = TextEditingController();
+
+  void filterItems(String query) {
+    setState(() {
+      filteredList = denemeList
+          .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey[300],
-        body: Column(
-          children: [
-            ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(bottom: Radius.circular(30)),
-              child: Container(
-                height: 90,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  image: DecorationImage(
-                      image: AssetImage("assets/images/carpex_koku_logo.png"),
-                      alignment: Alignment.center),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("Müşteri Seç"),
+          titleTextStyle: TextStyle(fontSize: 18),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: TextFormField(
+                  controller: searchController,
+                  onChanged: (value) {
+                    debugPrint(value);
+                    setState(() {});
+                    filterItems(value);
+                  },
+                  decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white70,
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.search)),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(30),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 150,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 60),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: DropdownButton<String>(
-                                  padding: EdgeInsets.all(9),
-                                  iconEnabledColor: Colors.black,
-                                  menuMaxHeight: 400,
-                                  iconSize: 28,
-                                  isExpanded: true,
-                                  hint: const Padding(
-                                    padding: EdgeInsets.all(6),
-                                    child: Text(
-                                      'Müşteri Seçiniz',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16),
-                                    ),
-                                  ),
-                                  value: selectedCustomer,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      print("newValue : ${newValue}");
-                                      selectedCustomer = newValue;
-                                      Constants.musteri = newValue!;
-                                    });
-                                  },
-                                  items: musteriler.map((customer) {
-                                    return DropdownMenuItem<String>(
-                                      value: customer['id'],
-                                      child: Text(
-                                        "    ${customer['value']}",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 16),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  dropdownColor: Colors.white,
-                                ),
-                              ),
-                            ],
+              Expanded(
+                child: Container(
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    itemCount: denemeList.length,
+                    itemBuilder: (context, index) {
+                      final item = denemeList[index];
+                      return Card(
+                        child: ListTile(
+                          title: Text(
+                            item,
+                            style: TextStyle(fontSize: 13),
                           ),
+                          onTap: () {
+                            handleItemSelected(item);
+                          },
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 80),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // selectedCustomer != null ? Text(
-                          //         'Seçilen müşteri: $selectedCustomer',
-                          //         style: const TextStyle(fontSize: 16),
-                          //       )
-                          //     : const Text('Seçilen müşteri: Müşteri Seçilmedi'),
-                          ElevatedButton(
-                              onPressed: () {
-                                navigateToDeviceListPage();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                elevation: 5,
-                                minimumSize: const Size(300, 45),
-                                backgroundColor: Colors.green[400],
-                              ),
-                              child: const Text("Devam"))
-                        ],
-                      ),
-                    ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(bottom: 80),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     children: [
-                    //       // selectedCustomer != null ? Text(
-                    //       //         'Seçilen müşteri: $selectedCustomer',
-                    //       //         style: const TextStyle(fontSize: 16),
-                    //       //       )
-                    //       //     : const Text('Seçilen müşteri: Müşteri Seçilmedi'),
-                    //       ElevatedButton(
-                    //           onPressed: () {
-                    //             getCustomersApi();
-                    //           },
-                    //           style: ElevatedButton.styleFrom(
-                    //             elevation: 5,
-                    //             minimumSize: const Size(300, 45),
-                    //             backgroundColor: Colors.green[400],
-                    //           ),
-                    //           child: const Text("aaaaaaa"))
-                    //     ],
-                    //   ),
-                    // ),
-                  ],
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
+              // const SizedBox(height: 10),
+              // const Text(
+              //   'Arama Geçmişi:',
+              //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              // ),
+              // Expanded(
+              //   child: ListView.builder(
+              //     itemCount: searchHistory.length,
+              //     itemBuilder: (context, index) {
+              //       final query = searchHistory[index];
+              //       return ListTile(
+              //         title: Text(query),
+              //       );
+              //     },
+              //   ),
+              // ),
+
+              // Expanded(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16),
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: [
+              //         Padding(
+              //           padding: const EdgeInsets.all(30),
+              //           child: Align(
+              //             alignment: Alignment.centerLeft,
+              //             child: SizedBox(
+              //               width: MediaQuery.of(context).size.width,
+              //               height: 150,
+              //               child: Column(
+              //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //                 children: [
+              //                   const SizedBox(height: 60),
+              //                   Container(
+              //                     decoration: BoxDecoration(
+              //                         color: Colors.white,
+              //                         borderRadius: BorderRadius.circular(15)),
+              //                     child: DropdownButton<String>(
+              //                       padding: EdgeInsets.all(9),
+              //                       iconEnabledColor: Colors.black,
+              //                       menuMaxHeight: 400,
+              //                       iconSize: 28,
+              //                       isExpanded: true,
+              //                       hint: const Padding(
+              //                         padding: EdgeInsets.all(6),
+              //                         child: Text(
+              //                           'Müşteri Seçiniz',
+              //                           style: TextStyle(
+              //                               color: Colors.black,
+              //                               fontWeight: FontWeight.w700,
+              //                               fontSize: 16),
+              //                         ),
+              //                       ),
+              //                       value: selectedCustomer,
+              //                       onChanged: (String? newValue) {
+              //                         setState(() {
+              //                           print("newValue : ${newValue}");
+              //                           selectedCustomer = newValue;
+              //                           Constants.musteri = newValue!;
+              //                         });
+              //                       },
+              //                       items: musteriler.map((customer) {
+              //                         return DropdownMenuItem<String>(
+              //                           value: customer['id'],
+              //                           child: Text(
+              //                             "    ${customer['value']}",
+              //                             style: TextStyle(
+              //                                 color: Colors.black, fontSize: 16),
+              //                           ),
+              //                         );
+              //                       }).toList(),
+              //                       dropdownColor: Colors.white,
+              //                     ),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //         Padding(
+              //           padding: const EdgeInsets.only(bottom: 80),
+              //           child: Row(
+              //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //             children: [
+              //               // selectedCustomer != null ? Text(
+              //               //         'Seçilen müşteri: $selectedCustomer',
+              //               //         style: const TextStyle(fontSize: 16),
+              //               //       )
+              //               //     : const Text('Seçilen müşteri: Müşteri Seçilmedi'),
+              //               ElevatedButton(
+              //                   onPressed: () {
+              //                     navigateToDeviceListPage();
+              //                   },
+              //                   style: ElevatedButton.styleFrom(
+              //                     elevation: 5,
+              //                     minimumSize: const Size(300, 45),
+              //                     backgroundColor: Colors.green[400],
+              //                   ),
+              //                   child: const Text("Devam"))
+              //             ],
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void handleItemSelected(String selectedItem) {
+    print('Seçilen öğe: $selectedItem');
   }
 }
