@@ -42,7 +42,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     var listem = [];
     for (var i = 0; i < Constants.tumEklenenCihazlar.length; i++) {
       print(Constants.tumEklenenCihazlar[i].cihazKodu);
-      listem.add("CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}".toString());
+      listem.add("CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}".toString().toUpperCase());
     }
 
     var body = {"username": prefs!.get("username").toString(), "buyer_id": Constants.musteri.toString(), "devices": listem};

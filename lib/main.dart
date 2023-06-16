@@ -91,7 +91,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void navigateToDeviceListPage() {
     if (selectedCustomer != null) {
-      Constants.musteri = selectedCustomer['value'].toString();
+      print("AAAAAAAAAAAAAAAA1 : ${selectedCustomer['id'].toString()}");
+      print("AAAAAAAAAAAAAAAA2 : ${selectedCustomer['value'].toString()}");
+      Constants.musteri = selectedCustomer['id'].toString();
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
