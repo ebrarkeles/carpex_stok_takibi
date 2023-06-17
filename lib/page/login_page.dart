@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement initState
     super.initState();
     usernameController.text = "admin@CARPEX";
-    passwordController.text = "admin";
+    passwordController.text = "crp-1234";
   }
 
   void login() async {
@@ -39,7 +39,11 @@ class _LoginPageState extends State<LoginPage> {
     try {
       print("AAAAAAAAAAA ${usernameController.text.toString()}");
       print("BBBBBBBBBBB ${passwordController.text.toString()}");
-      http.Response response = await http.post(Uri.parse("http://95.70.201.96:39050/api/login/"), body: {'username': usernameController.text.toString(), 'password': passwordController.text.toString()});
+      http.Response response = await http
+          .post(Uri.parse("http://95.70.201.96:39050/api/login/"), body: {
+        'username': usernameController.text.toString(),
+        'password': passwordController.text.toString()
+      });
       print("1111 ${response.body}");
 
       if (response.statusCode == 200) {
@@ -58,7 +62,11 @@ class _LoginPageState extends State<LoginPage> {
               );
             });
         await Future.delayed(Duration(seconds: 1));
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const MyHomePage()), (Route<dynamic> route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => const MyHomePage()),
+            (Route<dynamic> route) => false);
       } else {
         print('başarısız');
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -92,7 +100,8 @@ class _LoginPageState extends State<LoginPage> {
         body: Column(
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
+              borderRadius:
+                  const BorderRadius.vertical(bottom: Radius.circular(30)),
               child: Column(
                 children: [
                   Container(
@@ -100,14 +109,23 @@ class _LoginPageState extends State<LoginPage> {
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(
                       color: Colors.white,
-                      image: DecorationImage(image: AssetImage("assets/images/carpex_koku_logo.png"), alignment: Alignment.center),
+                      image: DecorationImage(
+                          image:
+                              AssetImage("assets/images/carpex_koku_logo.png"),
+                          alignment: Alignment.center),
                     ),
                   ),
                   Container(
                     color: Colors.white,
                     height: 70,
                     width: MediaQuery.of(context).size.width,
-                    child: Align(alignment: Alignment.center, child: Text("Cihaz Sevk", style: TextStyle(fontSize: 25, color: Constants.themeColor, fontWeight: FontWeight.bold))),
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: Text("Cihaz Sevk",
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Constants.themeColor,
+                                fontWeight: FontWeight.bold))),
                   )
                 ],
               ),
@@ -118,7 +136,9 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 25),
-                  const Text("Kullanıcı Adınızı Giriniz", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  const Text("Kullanıcı Adınızı Giriniz",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 15),
                   TextFormField(
                     controller: usernameController,
@@ -126,14 +146,17 @@ class _LoginPageState extends State<LoginPage> {
                       filled: true,
                       fillColor: Colors.white,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 1.5, color: Colors.grey),
+                        borderSide:
+                            const BorderSide(width: 1.5, color: Colors.grey),
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       labelText: 'Kullanıcı Adı',
                     ),
                   ),
                   const SizedBox(height: 30),
-                  const Text("Şifrenizi Giriniz", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  const Text("Şifrenizi Giriniz",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 15),
                   Obx(
                     () => TextFormField(
@@ -158,7 +181,8 @@ class _LoginPageState extends State<LoginPage> {
                         filled: true,
                         fillColor: Colors.white,
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(width: 1.5, color: Colors.grey),
+                          borderSide:
+                              const BorderSide(width: 1.5, color: Colors.grey),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         labelText: 'Şifre',
@@ -248,7 +272,8 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: Constants.themeColor),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Constants.themeColor),
                           onPressed: () {
                             login();
                           },
@@ -268,7 +293,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextButton(
                           child: const Text(
                             "Temizle",
-                            style: TextStyle(color: Color.fromRGBO(43, 114, 176, 1)),
+                            style: TextStyle(
+                                color: Color.fromRGBO(43, 114, 176, 1)),
                           ),
                           onPressed: () {
                             passwordController.clear();
