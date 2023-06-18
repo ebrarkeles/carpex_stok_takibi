@@ -13,7 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   runApp(const MyApp());
 }
@@ -58,13 +59,23 @@ class _MyHomePageState extends State<MyHomePage> {
   void getCustomersApi() async {
     prefs = await SharedPreferences.getInstance();
     try {
-      String basicAuth = 'Basic ' + base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'));
-      http.Response response = await http.get(Uri.parse("http://95.70.201.96:39050/api/customers/"), headers: <String, String>{'authorization': basicAuth});
+      String username = prefs!.get("username").toString();
+
+      String basicAuth = 'Basic ' +
+          base64.encode(utf8.encode(
+              '${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'));
+      http.Response response = await http.get(
+          Uri.parse(
+              "http://95.70.201.96:39050/api/customers/${username.split('@').last.trim()}/children/"),
+          headers: <String, String>{'authorization': basicAuth});
 
       if (response.statusCode == 200) {
         var abc = jsonDecode(utf8.decode(response.bodyBytes));
         for (var i = 0; i < response.body.length; i++) {
-          musteriler.add({"value": abc[i]['name'].toString(), "id": abc[i]['id'].toString()});
+          musteriler.add({
+            "value": abc[i]['name'].toString(),
+            "id": abc[i]['id'].toString()
+          });
           newMusteriler = musteriler;
         }
       } else {
@@ -150,11 +161,42 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: const Color.fromRGBO(43, 114, 176, 1),
                 child: Column(
                   children: [
-                    Container(
+                    Stack(
                       alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      height: 60,
-                      child: const Text("Müşteri Seç", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          height: 60,
+                          child: const Text("Müşteri Seç",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                        Positioned(
+                          left: MediaQuery.of(context).size.width / 2 - 30,
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: MediaQuery.of(context).size.width,
+                            height: 60,
+                            child: IconButton(
+                                onPressed: () {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const LoginPage()),
+                                    (route) => false,
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.exit_to_app_outlined,
+                                  color: Colors.white60,
+                                )),
+                          ),
+                        ),
+                      ],
                     ),
                     Container(
                       height: 55,
@@ -212,7 +254,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           itemBuilder: (context, index) {
                             final item = newMusteriler[index];
                             print("item ${item}");
-                            if (selectedCustomer != null && selectedCustomer['value'].toString() == item['value'].toString()) {
+                            if (selectedCustomer != null &&
+                                selectedCustomer['value'].toString() ==
+                                    item['value'].toString()) {
                               return Card(
                                 margin: const EdgeInsets.only(bottom: 5),
                                 child: ListTile(
@@ -247,7 +291,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                padding: const EdgeInsets.only(
+                    top: 10, bottom: 10, left: 10, right: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -259,13 +304,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               navigateToDeviceListPage();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromRGBO(43, 114, 176, 1),
+                              backgroundColor:
+                                  const Color.fromRGBO(43, 114, 176, 1),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(margin: const EdgeInsets.only(right: 5), child: const Text("Cihaz Ekle")),
+                                Container(
+                                    margin: const EdgeInsets.only(right: 5),
+                                    child: const Text("Cihaz Ekle")),
                                 const Icon(
                                   Icons.add,
                                 )
