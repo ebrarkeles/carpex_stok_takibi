@@ -54,9 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
   var result = '';
   var musteriler = [];
   var newMusteriler = [];
+  bool isFirstLoading = false;
 
   SharedPreferences? prefs;
   void getCustomersApi() async {
+    setState(() {
+      isFirstLoading = true;
+    });
     prefs = await SharedPreferences.getInstance();
     try {
       String username = prefs!.get("username").toString();
@@ -91,7 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
     } catch (e) {
       print(e.toString());
     }
-    setState(() {});
+    setState(() {
+      isFirstLoading = false;
+    });
   }
 
   @override
@@ -132,8 +138,6 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
   }
-
-  List<String> filteredList = [];
 
   searchValue(String query) {
     final filteredValues = musteriler.where((element) {
@@ -182,17 +186,51 @@ class _MyHomePageState extends State<MyHomePage> {
                             height: 60,
                             child: IconButton(
                                 onPressed: () {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginPage()),
-                                    (route) => false,
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text("Carpex Cihaz Sevk"),
+                                      content: Text(
+                                          "Oturumdan çıkış yapmak istiyor musunuz?"),
+                                      actions: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              elevation: 0),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Text(
+                                            'Hayır',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    194, 0, 0, 0)),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 255, 60, 60)),
+                                          onPressed: () {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const LoginPage()),
+                                              (route) => false,
+                                            );
+                                            prefs!.clear();
+                                          },
+                                          child: Text('Evet, Çıkış yap'),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 },
                                 icon: const Icon(
                                   Icons.exit_to_app_outlined,
-                                  color: Colors.white60,
+                                  color: Colors.white,
                                 )),
                           ),
                         ),
@@ -242,52 +280,63 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  child: newMusteriler.isEmpty
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: newMusteriler.length,
-                          itemBuilder: (context, index) {
-                            final item = newMusteriler[index];
-                            print("item ${item}");
-                            if (selectedCustomer != null &&
-                                selectedCustomer['value'].toString() ==
-                                    item['value'].toString()) {
-                              return Card(
-                                margin: const EdgeInsets.only(bottom: 5),
-                                child: ListTile(
-                                    title: Text(
-                                      item['value'],
-                                      style: const TextStyle(fontSize: 13),
+                child: Stack(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: newMusteriler.isEmpty
+                          ? Center(
+                              child: Text("Müşteri bulunamadı"),
+                            )
+                          : ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: newMusteriler.length,
+                              itemBuilder: (context, index) {
+                                final item = newMusteriler[index];
+                                print("item ${item}");
+                                if (selectedCustomer != null &&
+                                    selectedCustomer['value'].toString() ==
+                                        item['value'].toString()) {
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 5),
+                                    child: ListTile(
+                                        title: Text(
+                                          item['value'],
+                                          style: const TextStyle(fontSize: 13),
+                                        ),
+                                        onTap: () {
+                                          handleItemSelected(item);
+                                        },
+                                        trailing: const Icon(
+                                          Icons.check,
+                                          color: Colors.green,
+                                        )),
+                                  );
+                                } else {
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 5),
+                                    child: ListTile(
+                                      title: Text(
+                                        item['value'],
+                                        style: const TextStyle(fontSize: 13),
+                                      ),
+                                      onTap: () {
+                                        handleItemSelected(item);
+                                      },
                                     ),
-                                    onTap: () {
-                                      handleItemSelected(item);
-                                    },
-                                    trailing: const Icon(
-                                      Icons.check,
-                                      color: Colors.green,
-                                    )),
-                              );
-                            } else {
-                              return Card(
-                                margin: const EdgeInsets.only(bottom: 5),
-                                child: ListTile(
-                                  title: Text(
-                                    item['value'],
-                                    style: const TextStyle(fontSize: 13),
-                                  ),
-                                  onTap: () {
-                                    handleItemSelected(item);
-                                  },
-                                ),
-                              );
-                            }
-                          },
-                        ),
+                                  );
+                                }
+                              },
+                            ),
+                    ),
+                    isFirstLoading == true
+                        ? Container(
+                            color: Colors.white,
+                            alignment: Alignment.center,
+                            child: const CircularProgressIndicator(),
+                          )
+                        : const SizedBox(),
+                  ],
                 ),
               ),
               Padding(

@@ -30,8 +30,8 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    usernameController.text = "admin@CARPEX";
-    passwordController.text = "crp-1234";
+    usernameController.text = "";
+    passwordController.text = "";
   }
 
   void login() async {
@@ -96,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
         resizeToAvoidBottomInset: false,
         body: Column(
           children: [
@@ -255,37 +256,25 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 25),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  //   child: Text(
-                  //     hasError
-                  //         ? "*Lütfen tüm hücreleri düzgün bir şekilde doldurun"
-                  //         : "",
-                  //     style: const TextStyle(
-                  //       color: Colors.red,
-                  //       fontSize: 12,
-                  //       fontWeight: FontWeight.w400,
-                  //     ),
-                  //   ),
-                  // ),
+
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Constants.themeColor),
-                          onPressed: () {
-                            login();
-                          },
-                          child: const Text('Giriş Yap'),
+                        child: SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                login();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromRGBO(43, 114, 176, 1),
+                              ),
+                              child: Container(child: const Text("Giriş Yap"))),
                         ),
-                      ),
+                      )
                     ],
-                  ),
-                  // const SizedBox(height: 10),
-                  Text(
-                    _errorMessage,
-                    style: const TextStyle(color: Colors.red),
                   ),
                   Row(
                     children: [
