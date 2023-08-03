@@ -25,33 +25,36 @@ class _LoginPageState extends State<LoginPage> {
 
   final controller = Get.put(MainController());
 
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
-    // usernameController.text = "";
-    // passwordController.text = "";
+    // controller.usernameController.value.text = "";
+    // controller.passwordController.value.text = "";
     _loadRememberMe();
   }
 
   void login() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
-      print("AAAAAAAAAAA ${usernameController.text.toString()}");
-      print("BBBBBBBBBBB ${passwordController.text.toString()}");
+      print("AAAAAAAAAAA ${controller.usernameController.value.toString()}");
+      print("BBBBBBBBBBB ${controller.passwordController.value.toString()}");
       http.Response response = await http
           .post(Uri.parse("http://95.70.201.96:39050/api/login/"), body: {
-        'username': usernameController.text.toString(),
-        'password': passwordController.text.toString()
+        'username': controller.usernameController.value.toString(),
+        'password': controller.passwordController.value.toString()
       });
       print("1111 ${response.body}");
 
       if (response.statusCode == 200) {
-        print("222 ${response.body}");
-        prefs.setString("username", usernameController.text.toString());
-        prefs.setString("password", passwordController.text.toString());
+        if (controller.rememberMe.value == true) {
+          _saveLoginInfo(controller.usernameController.value.toString(),
+              controller.passwordController.value.toString());
+        } else {
+          _clearLoginInfo();
+        }
+
+        // prefs.setString("username", controller.usernameController.value.text.toString());
+        // prefs.setString("password", controller.passwordController.value.text.toString());
         showDialog(
             barrierDismissible: false,
             context: context,
@@ -69,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
             MaterialPageRoute(
                 builder: (BuildContext context) => const MyHomePage()),
             (Route<dynamic> route) => false);
+        print("222 ${response.body}");
       } else {
         print('başarısız');
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -88,6 +92,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
+      print(e.hashCode);
       print(e.toString());
     }
   }
@@ -101,8 +106,11 @@ class _LoginPageState extends State<LoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     controller.rememberMe.value = prefs.getBool('rememberMe') ?? false;
     if (controller.rememberMe.value == true) {
-      usernameController.text = prefs.getString('username') ?? '';
-      passwordController.text = prefs.getString('password') ?? '';
+      controller.usernameController.value = prefs.getString('username') ?? '';
+      controller.passwordController.value = prefs.getString('password') ?? '';
+    } else {
+      controller.usernameController.value = "";
+      controller.passwordController.value = "";
     }
   }
 
@@ -169,22 +177,26 @@ class _LoginPageState extends State<LoginPage> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 15),
-                  TextFormField(
-                    controller: usernameController,
-                    decoration: InputDecoration(
-                      hintText: controller.rememberMe.value == true
-                          ? isVisible.value == false
-                              ? usernameController.toString()
-                              : 'Kullanıcı Adı'
-                          : 'Kullanıcı Adı',
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 1.5, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(15.0),
+                  Obx(
+                    () => TextFormField(
+                      onChanged: (value) {
+                        controller.usernameController.value = value;
+                      },
+                      decoration: InputDecoration(
+                        hintText: controller.rememberMe.value == true
+                            ? controller.usernameController.value.length == 0
+                                ? 'Kullanıcı Adı'
+                                : controller.usernameController.value
+                            : 'Kullanıcı Adı',
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 1.5, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        //labelText: 'Kullanıcı Adı',
                       ),
-                      //labelText: 'Kullanıcı Adı',
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -194,13 +206,13 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 15),
                   Obx(
                     () => TextFormField(
-                      controller: passwordController,
+                      // controller: controller.passwordController.value,
                       obscuringCharacter: isVisible.value == true ? "*" : ' ',
                       obscureText: isVisible.value == true ? true : false,
                       decoration: InputDecoration(
                         hintText: controller.rememberMe.value == true
                             ? isVisible.value == false
-                                ? passwordController.toString()
+                                ? controller.passwordController.value.toString()
                                 : 'Şifre'
                             : 'Şifre',
                         suffixIcon: isVisible.value == true
@@ -235,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       onChanged: (value) {
                         debugPrint(value);
-
+                        controller.passwordController.value = value;
                         setState(() {
                           hasError = false;
                           deneme = value;
@@ -247,7 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                   //   appContext: context,
                   //   obscureText: true,
                   //   obscuringCharacter: "*",
-                  //   controller: passwordController,
+                  //   controller: controller.passwordController.value,
                   //   blinkWhenObscuring: true,
                   //   length: 6,
                   //   validator: (v) {
@@ -315,8 +327,8 @@ class _LoginPageState extends State<LoginPage> {
                               TextStyle(color: Color.fromRGBO(43, 114, 176, 1)),
                         ),
                         onPressed: () {
-                          passwordController.clear();
-                          usernameController.clear();
+                          controller.passwordController.value = "";
+                          controller.usernameController.value = "";
                         },
                       ),
                     ],
@@ -331,6 +343,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 50,
                           child: ElevatedButton(
                               onPressed: () {
+                                //await controller.delay(1000);
                                 login();
                               },
                               style: ElevatedButton.styleFrom(

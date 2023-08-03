@@ -214,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       const LoginPage()),
                                               (route) => false,
                                             );
-                                            prefs!.clear();
+                                            // prefs!.clear();
                                           },
                                           child: const Text('Evet, Çıkış yap'),
                                         ),
