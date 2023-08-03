@@ -8,4 +8,6 @@ class MainController extends GetxController {
   void setSelectedCustomer(String customer) {
     selectedCustomer.value = customer;
   }
+
+  var rememberMe = false.obs;
 }

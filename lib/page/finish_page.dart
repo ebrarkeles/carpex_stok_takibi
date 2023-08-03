@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:carpex_stok_takibi/constants/constants.dart';
 import 'package:carpex_stok_takibi/main.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +33,12 @@ class _FinishPageState extends State<FinishPage> {
                   'Cihazlar sevk edildi.',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'İşlem başarılı!',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -52,7 +54,7 @@ class _FinishPageState extends State<FinishPage> {
                                       const MyHomePage()),
                               (Route<dynamic> route) => false);
                         },
-                        child: Text("Anasayfaya Dön")),
+                        child: const Text("Anasayfaya Dön")),
                   ],
                 )
               ],

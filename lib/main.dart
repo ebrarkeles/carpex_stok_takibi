@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings, avoid_print, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, use_build_context_synchronously
+// ignore_for_file: prefer_interpolation_to_compose_strings, avoid_print, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, use_build_context_synchronously, avoid_init_to_null
 
 import 'dart:convert';
 
@@ -31,14 +31,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Constants.getSplashScreen,
-      //const LoginPage(),
-      // builder: (context, childWidget) {
-      //   final data = MediaQuery.of(context);
-      //   return MediaQuery(
-      //     data: data.copyWith(textScaleFactor: 1),
-      //     child: childWidget,
-      //   );
-      // },
     );
   }
 }
@@ -59,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   SharedPreferences? prefs;
   void getCustomersApi() async {
     setState(() {
+      //müşteri listesi yüklenirkenki indicator
       isFirstLoading = true;
     });
     prefs = await SharedPreferences.getInstance();
@@ -106,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getCustomersApi();
   }
 
+  //Müşterileri getiren API
   void navigateToDeviceListPage() {
     if (selectedCustomer != null) {
       print("AAAAAAAAAAAAAAAA1 : ${selectedCustomer['id'].toString()}");
@@ -158,11 +152,11 @@ class _MyHomePageState extends State<MyHomePage> {
       child: WillPopScope(
         onWillPop: showExitPopupHandle,
         child: Scaffold(
-          backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
+          backgroundColor: Constants.backgroundColor,
           body: Column(
             children: [
               Container(
-                color: const Color.fromRGBO(43, 114, 176, 1),
+                color: Constants.themeColor,
                 child: Column(
                   children: [
                     Stack(
@@ -190,8 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     barrierDismissible: false,
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      title: Text("Carpex Cihaz Sevk"),
-                                      content: Text(
+                                      title: const Text("Carpex Cihaz Sevk"),
+                                      content: const Text(
                                           "Oturumdan çıkış yapmak istiyor musunuz?"),
                                       actions: [
                                         ElevatedButton(
@@ -222,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             );
                                             prefs!.clear();
                                           },
-                                          child: Text('Evet, Çıkış yap'),
+                                          child: const Text('Evet, Çıkış yap'),
                                         ),
                                       ],
                                     ),
@@ -285,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Container(
                       margin: const EdgeInsets.only(top: 10),
                       child: newMusteriler.isEmpty
-                          ? Center(
+                          ? const Center(
                               child: Text("Müşteri bulunamadı"),
                             )
                           : ListView.builder(
@@ -353,8 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               navigateToDeviceListPage();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromRGBO(43, 114, 176, 1),
+                              backgroundColor: Constants.themeColor,
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,

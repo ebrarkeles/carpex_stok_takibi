@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/constants.dart';
-import 'okutma_sayfasi_güncel.dart';
+import 'okutma_sayfasi.dart';
 import 'package:http/http.dart' as http;
 
 class QrDeviceListPage extends StatefulWidget {
@@ -42,20 +42,31 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     var listem = [];
     for (var i = 0; i < Constants.tumEklenenCihazlar.length; i++) {
       print(Constants.tumEklenenCihazlar[i].cihazKodu);
-      listem.add("CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}".toString().toUpperCase());
+      listem.add(
+          "CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}"
+              .toString()
+              .toUpperCase());
     }
 
-    var body = {"username": prefs!.get("username").toString(), "buyer_id": Constants.musteri.toString(), "devices": listem};
-    print("body1 : ${body}");
+    var body = {
+      "username": prefs!.get("username").toString(),
+      "buyer_id": Constants.musteri.toString(),
+      "devices": listem
+    };
+    print("body1 : $body");
     print("body2 : ${json.encode(body)}");
     try {
-      String basicAuth = 'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
+      String basicAuth =
+          'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
       print(basicAuth);
 
-      http.Response response = await http.post(Uri.parse("http://95.70.201.96:39050/api/device-transaction/"), body: json.encode(body), headers: <String, String>{
-        'authorization': basicAuth,
-        'Content-Type': 'application/json; charset=UTF-8',
-      });
+      http.Response response = await http.post(
+          Uri.parse("http://95.70.201.96:39050/api/device-transaction/"),
+          body: json.encode(body),
+          headers: <String, String>{
+            'authorization': basicAuth,
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
 
       print("11111111111 ${response.body}");
 
@@ -63,7 +74,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
         print("2222222222 ${response.body}");
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (BuildContext context) => const FinishPage()),
+          MaterialPageRoute(
+              builder: (BuildContext context) => const FinishPage()),
           (Route<dynamic> route) => false,
         );
       } else {
@@ -105,7 +117,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
       child: WillPopScope(
         onWillPop: showExitPopupHandle,
         child: Scaffold(
-          backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
+          backgroundColor: Constants.backgroundColor,
           appBar: AppBar(
             centerTitle: true,
             elevation: 0,
@@ -122,7 +134,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const MyHomePage()),
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const MyHomePage()),
                   (Route<dynamic> route) => false,
                 );
               },
@@ -171,7 +184,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 15, left: 15, top: 8, bottom: 20),
+                      padding: const EdgeInsets.only(
+                          right: 15, left: 15, top: 8, bottom: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -212,14 +226,26 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                                         backgroundColor: Colors.green[400],
                                       ),
                                       onPressed: () {
-                                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const QRScannerPage()), (Route<dynamic> route) => false);
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        const QRScannerPage()),
+                                            (Route<dynamic> route) => false);
                                       },
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          const Icon(Icons.qr_code_scanner_rounded),
-                                          Container(margin: const EdgeInsets.only(left: 6), child: const Text("Qr Okut")),
+                                          const Icon(
+                                              Icons.qr_code_scanner_rounded),
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 6),
+                                              child: const Text("Qr Okut")),
                                         ],
                                       ),
                                     ),
@@ -234,13 +260,18 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                                         _showConfirmationDialog();
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color.fromRGBO(43, 114, 176, 1),
+                                        backgroundColor: Constants.themeColor,
                                       ),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Container(margin: const EdgeInsets.only(right: 6), child: const Text("Gönder")),
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 6),
+                                              child: const Text("Gönder")),
                                           const Icon(Icons.send_rounded),
                                         ],
                                       ),
@@ -281,7 +312,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
             content: const SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  Text('Sevk edilecek bir cihaz bulunamadı. Lütfen önce cihaz ekleyiniz.'),
+                  Text(
+                      'Sevk edilecek bir cihaz bulunamadı. Lütfen önce cihaz ekleyiniz.'),
                 ],
               ),
             ),
@@ -306,7 +338,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  Text('${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
+                  Text(
+                      '${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
                 ],
               ),
             ),
@@ -329,7 +362,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                   const SizedBox(width: 10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(43, 114, 176, 1),
+                      backgroundColor: Constants.themeColor,
                     ),
                     onPressed: () => sendDevicesApi(),
                     //return true when click on "Yes"

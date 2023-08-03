@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:carpex_stok_takibi/constants/constants.dart';
+import 'package:carpex_stok_takibi/controller/mainController.dart';
 import 'package:carpex_stok_takibi/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,20 +19,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final String _errorMessage = '';
   String errorPasswordMessage = "";
   String deneme = '';
   RxBool isVisible = true.obs;
+
+  final controller = Get.put(MainController());
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    usernameController.text = "";
-    passwordController.text = "";
+    // usernameController.text = "";
+    // passwordController.text = "";
+    _loadRememberMe();
   }
 
   void login() async {
@@ -61,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               );
             });
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -81,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
             margin: EdgeInsets.only(
               bottom: MediaQuery.of(context).size.height - 85,
             ),
-            duration: Duration(milliseconds: 800),
+            duration: const Duration(milliseconds: 800),
           ),
         );
       }
@@ -90,13 +92,39 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  _saveRememberMe(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('rememberMe', value);
+  }
+
+  _loadRememberMe() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    controller.rememberMe.value = prefs.getBool('rememberMe') ?? false;
+    if (controller.rememberMe.value == true) {
+      usernameController.text = prefs.getString('username') ?? '';
+      passwordController.text = prefs.getString('password') ?? '';
+    }
+  }
+
+  _saveLoginInfo(String username, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+  }
+
+  _clearLoginInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+    await prefs.remove('password');
+  }
+
   @override
   Widget build(BuildContext context) {
     bool hasError = false;
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
+        backgroundColor: Constants.backgroundColor,
         resizeToAvoidBottomInset: false,
         body: Column(
           children: [
@@ -144,6 +172,11 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: usernameController,
                     decoration: InputDecoration(
+                      hintText: controller.rememberMe.value == true
+                          ? isVisible.value == false
+                              ? usernameController.toString()
+                              : 'Kullanıcı Adı'
+                          : 'Kullanıcı Adı',
                       filled: true,
                       fillColor: Colors.white,
                       enabledBorder: OutlineInputBorder(
@@ -151,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                             const BorderSide(width: 1.5, color: Colors.grey),
                         borderRadius: BorderRadius.circular(15.0),
                       ),
-                      labelText: 'Kullanıcı Adı',
+                      //labelText: 'Kullanıcı Adı',
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -165,12 +198,17 @@ class _LoginPageState extends State<LoginPage> {
                       obscuringCharacter: isVisible.value == true ? "*" : ' ',
                       obscureText: isVisible.value == true ? true : false,
                       decoration: InputDecoration(
+                        hintText: controller.rememberMe.value == true
+                            ? isVisible.value == false
+                                ? passwordController.toString()
+                                : 'Şifre'
+                            : 'Şifre',
                         suffixIcon: isVisible.value == true
                             ? GestureDetector(
                                 onTap: () {
                                   isVisible.value = false;
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   Icons.visibility_off,
                                   color: Colors.grey,
                                 ))
@@ -178,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onTap: () {
                                   isVisible.value = true;
                                 },
-                                child: Icon(Icons.visibility)),
+                                child: const Icon(Icons.visibility)),
                         filled: true,
                         fillColor: Colors.white,
                         enabledBorder: OutlineInputBorder(
@@ -186,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
                               const BorderSide(width: 1.5, color: Colors.grey),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
-                        labelText: 'Şifre',
+                        //labelText: 'Şifre',
                       ),
                       validator: (v) {
                         if (v!.length < 3) {
@@ -255,7 +293,35 @@ class _LoginPageState extends State<LoginPage> {
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),
-                  const SizedBox(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Obx(() => Checkbox(
+                                value: controller.rememberMe.value,
+                                onChanged: (value) {
+                                  controller.rememberMe.value = value!;
+                                  _saveRememberMe(value);
+                                },
+                              )),
+                          const Text('Beni Hatırla'),
+                        ],
+                      ),
+                      TextButton(
+                        child: const Text(
+                          "Temizle",
+                          style:
+                              TextStyle(color: Color.fromRGBO(43, 114, 176, 1)),
+                        ),
+                        onPressed: () {
+                          passwordController.clear();
+                          usernameController.clear();
+                        },
+                      ),
+                    ],
+                  ),
+                  //  const SizedBox(height: 15),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -268,29 +334,11 @@ class _LoginPageState extends State<LoginPage> {
                                 login();
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromRGBO(43, 114, 176, 1),
+                                backgroundColor: Constants.themeColor,
                               ),
-                              child: Container(child: const Text("Giriş Yap"))),
+                              child: const Text("Giriş Yap")),
                         ),
                       )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          child: const Text(
-                            "Temizle",
-                            style: TextStyle(
-                                color: Color.fromRGBO(43, 114, 176, 1)),
-                          ),
-                          onPressed: () {
-                            passwordController.clear();
-                            usernameController.clear();
-                          },
-                        ),
-                      ),
                     ],
                   ),
                 ],

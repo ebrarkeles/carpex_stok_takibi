@@ -7,7 +7,8 @@ import '../page/login_page.dart';
 class Constants {
   Constants._();
 
-  static Color themeColor = Color(0xFF2B72B0);
+  static Color themeColor = const Color.fromRGBO(43, 114, 176, 1);
+  static Color backgroundColor = const Color.fromRGBO(245, 245, 245, 1);
 
   static List<Cihaz> tumEklenenCihazlar = [];
 
@@ -22,6 +23,5 @@ class Constants {
     animationDuration: const Duration(milliseconds: 700),
     splashIconSize: 250,
     centered: true,
-    //curve: Curves.bounceIn,
   );
 }

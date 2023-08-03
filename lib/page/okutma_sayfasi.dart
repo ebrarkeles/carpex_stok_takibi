@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, file_names, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, file_names, use_build_context_synchronously, avoid_print
 
 import 'dart:convert';
 
@@ -81,7 +81,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
       "owner_id": username.split('@').last.trim(),
       "device_id": "CRP-${scannedDevice.replaceAll(' ', '').toUpperCase()}"
     };
-    print("body1 : ${body}");
+    print("body1 : $body");
     print("body2 : ${json.encode(body)}");
 
     try {
@@ -152,6 +152,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
       child: WillPopScope(
         onWillPop: showExitPopupHandle,
         child: Scaffold(
+          backgroundColor: Constants.backgroundColor,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             centerTitle: true,
@@ -318,8 +319,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                               height: 50,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromRGBO(43, 114, 176, 1),
+                                  backgroundColor: Constants.themeColor,
                                 ),
                                 onPressed: () {
                                   if (scannedDevice.isNotEmpty) {
@@ -458,7 +458,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
               ],
             ),
           ),
-          backgroundColor: Constants.themeColor,
+          backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(
             bottom: MediaQuery.of(context).size.height / 2,
