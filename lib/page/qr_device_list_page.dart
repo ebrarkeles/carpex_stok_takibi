@@ -79,7 +79,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
           (Route<dynamic> route) => false,
         );
       } else {
-        print('başarısız');
+        print('başarısızqr');
         setState(() {
           sendCircularIsActive = false;
         });

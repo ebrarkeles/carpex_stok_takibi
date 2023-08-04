@@ -72,9 +72,13 @@ class _LoginPageState extends State<LoginPage> {
             MaterialPageRoute(
                 builder: (BuildContext context) => const MyHomePage()),
             (Route<dynamic> route) => false);
+        print(response.statusCode);
+
         print("222 ${response.body}");
       } else {
-        print('başarısız');
+        print(response.statusCode);
+
+        print('başarısızzzzzzzz');
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -184,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       decoration: InputDecoration(
                         hintText: controller.rememberMe.value == true
-                            ? controller.usernameController.value.length == 0
+                            ? controller.usernameController.value.isEmpty
                                 ? 'Kullanıcı Adı'
                                 : controller.usernameController.value
                             : 'Kullanıcı Adı',

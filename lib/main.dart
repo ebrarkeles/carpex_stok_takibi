@@ -8,8 +8,11 @@ import 'package:carpex_stok_takibi/page/qr_device_list_page.dart';
 import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'controller/mainController.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +38,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+final controller = Get.put(MainController());
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
   @override
@@ -56,11 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     prefs = await SharedPreferences.getInstance();
     try {
-      String username = prefs!.get("username").toString();
+      String username = controller.usernameController.value.toString();
 
       String basicAuth = 'Basic ' +
           base64.encode(utf8.encode(
-              '${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'));
+              '${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'));
       http.Response response = await http.get(
           Uri.parse(
               "http://95.70.201.96:39050/api/customers/${username.split('@').last.trim()}/children/"),
@@ -76,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
           newMusteriler = musteriler;
         }
       } else {
-        print('başarısız');
+        print('başarısımain');
         prefs!.clear();
         Navigator.pushAndRemoveUntil(
             context,
