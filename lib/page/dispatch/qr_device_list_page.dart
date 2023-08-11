@@ -3,13 +3,13 @@
 import 'dart:convert';
 
 import 'package:carpex_stok_takibi/main.dart';
-import 'package:carpex_stok_takibi/page/finish_page.dart';
 import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
 import 'package:carpex_stok_takibi/widgets/cihaz_listesi.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/constants.dart';
+import '../../constants/constants.dart';
+import 'finish_page.dart';
 import 'okutma_sayfasi.dart';
 import 'package:http/http.dart' as http;
 

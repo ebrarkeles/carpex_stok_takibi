@@ -2,7 +2,7 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:carpex_stok_takibi/constants/data_helpar.dart';
 import 'package:flutter/material.dart';
 
-import '../page/login_page.dart';
+import '../page/dispatch/login_page.dart';
 
 class Constants {
   Constants._();

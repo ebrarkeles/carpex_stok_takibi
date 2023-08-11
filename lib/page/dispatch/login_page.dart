@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:carpex_stok_takibi/constants/constants.dart';
 import 'package:carpex_stok_takibi/controller/mainController.dart';
 import 'package:carpex_stok_takibi/main.dart';
+import 'package:carpex_stok_takibi/page/action_choose_page/action_choose_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -25,11 +26,16 @@ class _LoginPageState extends State<LoginPage> {
 
   final controller = Get.put(MainController());
 
+  SharedPreferences? prefs;
+
+  late TextEditingController _textEditingController1;
+  late TextEditingController _textEditingController2;
+
   @override
   void initState() {
     super.initState();
-    // controller.usernameController.value.text = "";
-    // controller.passwordController.value.text = "";
+    _textEditingController1 = TextEditingController();
+    _textEditingController2 = TextEditingController();
     _loadRememberMe();
   }
 
@@ -47,8 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         if (controller.rememberMe.value == true) {
-          _saveLoginInfo(controller.usernameController.value.toString(),
-              controller.passwordController.value.toString());
+          _saveLoginInfo();
         } else {
           _clearLoginInfo();
         }
@@ -67,11 +72,18 @@ class _LoginPageState extends State<LoginPage> {
               );
             });
         await Future.delayed(const Duration(seconds: 1));
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (BuildContext context) => const ActionChoosePage()),
+        //     (Route<dynamic> route) => false);
+
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
                 builder: (BuildContext context) => const MyHomePage()),
             (Route<dynamic> route) => false);
+
         print(response.statusCode);
 
         print("222 ${response.body}");
@@ -108,26 +120,33 @@ class _LoginPageState extends State<LoginPage> {
 
   _loadRememberMe() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    controller.rememberMe.value = prefs.getBool('rememberMe') ?? false;
+    controller.rememberMe.value = prefs.getBool('rememberMe')!;
     if (controller.rememberMe.value == true) {
-      controller.usernameController.value = prefs.getString('username') ?? '';
-      controller.passwordController.value = prefs.getString('password') ?? '';
+      controller.usernameController.value = prefs.getString('username')!;
+      _textEditingController1.text = prefs.getString('username')!;
+      controller.passwordController.value = prefs.getString('password')!;
+      _textEditingController2.text = prefs.getString('password')!;
     } else {
       controller.usernameController.value = "";
+      _textEditingController1.text = "";
+
       controller.passwordController.value = "";
+      _textEditingController2.text = "";
     }
   }
 
-  _saveLoginInfo(String username, String password) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', username);
-    await prefs.setString('password', password);
+  _saveLoginInfo() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs!
+        .setString('username', controller.usernameController.value.toString());
+    prefs!
+        .setString('password', controller.passwordController.value.toString());
   }
 
   _clearLoginInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('username');
-    await prefs.remove('password');
+    prefs = await SharedPreferences.getInstance();
+    prefs!.remove('username');
+    prefs!.remove('password');
   }
 
   @override
@@ -181,28 +200,26 @@ class _LoginPageState extends State<LoginPage> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 15),
-                  Obx(
-                    () => TextFormField(
-                      onChanged: (value) {
-                        controller.usernameController.value = value;
-                      },
-                      decoration: InputDecoration(
-                        hintText: controller.rememberMe.value == true
-                            ? controller.usernameController.value.isEmpty
-                                ? 'Kullanıcı Adı'
-                                : controller.usernameController.value
-                            : 'Kullanıcı Adı',
-                        filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(width: 1.5, color: Colors.grey),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        //labelText: 'Kullanıcı Adı',
+                  TextField(
+                    controller: _textEditingController1,
+                    autofillHints: [AutofillHints.username],
+                    onChanged: (value) {
+                      controller.usernameController.value = value;
+                    },
+                    autofocus: false,
+                    decoration: InputDecoration(
+                      hintText: 'Kullanıcı Adı',
+                      filled: true,
+                      fillColor: Colors.white,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 1.5, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
+                      //labelText: 'Kullanıcı Adı',
                     ),
                   ),
+
                   const SizedBox(height: 30),
                   const Text("Şifrenizi Giriniz",
                       style:
@@ -210,15 +227,11 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 15),
                   Obx(
                     () => TextFormField(
-                      // controller: controller.passwordController.value,
+                      controller: _textEditingController2,
                       obscuringCharacter: isVisible.value == true ? "*" : ' ',
                       obscureText: isVisible.value == true ? true : false,
                       decoration: InputDecoration(
-                        hintText: controller.rememberMe.value == true
-                            ? isVisible.value == false
-                                ? controller.passwordController.value.toString()
-                                : 'Şifre'
-                            : 'Şifre',
+                        hintText: 'Şifre',
                         suffixIcon: isVisible.value == true
                             ? GestureDetector(
                                 onTap: () {

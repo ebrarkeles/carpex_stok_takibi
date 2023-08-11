@@ -3,8 +3,6 @@
 import 'dart:convert';
 
 import 'package:carpex_stok_takibi/constants/constants.dart';
-import 'package:carpex_stok_takibi/page/login_page.dart';
-import 'package:carpex_stok_takibi/page/qr_device_list_page.dart';
 import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +11,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controller/mainController.dart';
+import 'page/dispatch/login_page.dart';
+import 'page/dispatch/qr_device_list_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Carpex Stok Takibi',
       theme: ThemeData(
@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
           newMusteriler = musteriler;
         }
       } else {
-        print('başarısımain');
+        print('başarısızmain');
         prefs!.clear();
         Navigator.pushAndRemoveUntil(
             context,

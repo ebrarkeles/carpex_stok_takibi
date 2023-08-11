@@ -2,15 +2,16 @@
 
 import 'dart:convert';
 
-import 'package:carpex_stok_takibi/page/qr_device_list_page.dart';
 import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/constants.dart';
-import '../constants/data_helpar.dart';
+import '../../constants/constants.dart';
+import '../../constants/data_helpar.dart';
 import 'package:http/http.dart' as http;
+
+import 'qr_device_list_page.dart';
 
 class QRScannerPage extends StatefulWidget {
   const QRScannerPage({Key? key}) : super(key: key);
