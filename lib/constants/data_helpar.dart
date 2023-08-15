@@ -4,8 +4,5 @@ class Cihaz {
   Cihaz(this.cihazKodu);
 }
 
-extension StringExts on String {
-  String toLowerCaseTr() {
-    return replaceAll("I", "ı").replaceAll("Ç", "c").toLowerCase();
-  }
-}
+//! firmaya gönderilmiş cihazlar listesinde butonlara gerekli kontrolleri ekle 
+//! qr okutma da kontrollere bak düzenle

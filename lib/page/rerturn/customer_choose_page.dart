@@ -1,64 +1,41 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings, avoid_print, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, use_build_context_synchronously, avoid_init_to_null
+// ignore_for_file: avoid_print, use_build_context_synchronously, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
 
-import 'package:carpex_stok_takibi/constants/constants.dart';
 import 'package:carpex_stok_takibi/constants/fonts.dart';
 import 'package:carpex_stok_takibi/page/action_choose_page/action_choose_page.dart';
-import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
+import 'package:carpex_stok_takibi/page/rerturn/device_list_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'controller/mainController.dart';
-import 'page/dispatch/login_page.dart';
-import 'page/dispatch/qr_device_list_page.dart';
+import '../../constants/constants.dart';
+import '../../controller/mainController.dart';
+import '../../utils/on_wii_pop.dart';
+import '../dispatch/login_page.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+import 'package:http/http.dart' as http;
 
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MusteriSec extends StatefulWidget {
+  const MusteriSec({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Carpex Stok Takibi',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Constants.getSplashScreen,
-    );
-  }
+  State<MusteriSec> createState() => _MusteriSecState();
 }
 
-//  -----------------  CONTROLLER  ------------------//
-final controller = Get.put(MainController());
-
+class _MusteriSecState extends State<MusteriSec> {
+  //EXIT POP UP   ------------------------------------------------------------*/
+  Future<bool> showExitPopupHandle() => showExitPopup(context);
 /*----------------------------------------------------------------------------*/
-//!                      SEVK MÜŞTERİ SEÇ SAYFASI
-/*--------------------------------------------------------------------------- */
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  var selectedCustomer = null;
+  var selectedCustomer;
   var result = '';
   var musteriler = [];
   var newMusteriler = [];
   bool isFirstLoading = false;
+
+//  -----------------  CONTROLLER  ------------------//
+  final controller = Get.put(MainController());
 
   SharedPreferences? prefs;
   void getCustomersApi() async {
@@ -70,9 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       String username = controller.usernameController.value.toString();
 
-      String basicAuth = 'Basic ' +
-          base64.encode(utf8.encode(
-              '${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'));
+      String basicAuth =
+          'Basic ${base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'))}';
       http.Response response = await http.get(
           Uri.parse(
               "http://95.70.201.96:39050/api/customers/${username.split('@').last.trim()}/children/"),
@@ -120,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => QrDeviceListPage(
+              builder: (BuildContext context) => DeviceListPage(
                     selectedCustomer: selectedCustomer['value'].toString(),
                   )),
           (Route<dynamic> route) => false);
@@ -156,7 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   TextEditingController searchController = TextEditingController();
-  Future<bool> showExitPopupHandle() => showExitPopup(context);
 
   @override
   Widget build(BuildContext context) {
@@ -245,14 +220,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: IconButton(
                                 onPressed: () {
                                   print(
-                                      "sevk mustertisi seç sayfasında back button tıklandı");
+                                      "iade mustertisi seç sayfasında back button tıklandı");
                                   Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ActionChoosePage(),
-                                      ),
-                                      (route) => false);
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const ActionChoosePage()),
+                                    (Route<dynamic> route) => false,
+                                  );
                                 },
                                 icon: const Icon(
                                   Icons.arrow_back,
@@ -317,7 +292,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               itemCount: newMusteriler.length,
                               itemBuilder: (context, index) {
                                 final item = newMusteriler[index];
-                                print("item ${item}");
+                                print("item $item");
                                 if (selectedCustomer != null &&
                                     selectedCustomer['value'].toString() ==
                                         item['value'].toString()) {
@@ -384,10 +359,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                    margin: const EdgeInsets.only(right: 5),
-                                    child: const Text("Cihaz Ekle")),
+                                  margin: EdgeInsets.only(left: 4.0.wp),
+                                  child: const Text("Devam Et"),
+                                ),
+                                SizedBox(
+                                  width: 2.0.wp,
+                                ),
                                 const Icon(
-                                  Icons.add,
+                                  Icons.arrow_circle_right_outlined,
                                 )
                               ],
                             )),

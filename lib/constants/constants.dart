@@ -11,6 +11,7 @@ class Constants {
   static Color backgroundColor = const Color.fromRGBO(245, 245, 245, 1);
 
   static List<Cihaz> tumEklenenCihazlar = [];
+  static List<Cihaz> iadeCihazListesi = [];
 
   static String musteri = '';
 

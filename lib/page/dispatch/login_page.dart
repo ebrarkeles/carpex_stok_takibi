@@ -72,17 +72,17 @@ class _LoginPageState extends State<LoginPage> {
               );
             });
         await Future.delayed(const Duration(seconds: 1));
-        // Navigator.pushAndRemoveUntil(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (BuildContext context) => const ActionChoosePage()),
-        //     (Route<dynamic> route) => false);
-
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => const MyHomePage()),
+                builder: (BuildContext context) => const ActionChoosePage()),
             (Route<dynamic> route) => false);
+
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (BuildContext context) => const MyHomePage()),
+        //     (Route<dynamic> route) => false);
 
         print(response.statusCode);
 
@@ -202,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 15),
                   TextField(
                     controller: _textEditingController1,
-                    autofillHints: [AutofillHints.username],
+                    autofillHints: const [AutofillHints.username],
                     onChanged: (value) {
                       controller.usernameController.value = value;
                     },

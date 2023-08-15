@@ -1,7 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:carpex_stok_takibi/constants/constants.dart';
-import 'package:carpex_stok_takibi/main.dart';
+import 'package:carpex_stok_takibi/page/action_choose_page/action_choose_page.dart';
 import 'package:flutter/material.dart';
 
 class FinishPage extends StatefulWidget {
@@ -51,7 +51,7 @@ class _FinishPageState extends State<FinishPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      const MyHomePage()),
+                                      const ActionChoosePage()),
                               (Route<dynamic> route) => false);
                         },
                         child: const Text("Anasayfaya Dön")),

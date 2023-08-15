@@ -1,12 +1,15 @@
+// ignore_for_file: avoid_print
+
 import 'package:carpex_stok_takibi/constants/fonts.dart';
 import 'package:carpex_stok_takibi/main.dart';
-import 'package:carpex_stok_takibi/page/rerturn/musteri_sec.dart';
+import 'package:carpex_stok_takibi/page/rerturn/customer_choose_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/constants.dart';
 import '../../controller/mainController.dart';
 import '../../utils/on_wii_pop.dart';
+import '../dispatch/login_page.dart';
 
 class ActionChoosePage extends StatefulWidget {
   const ActionChoosePage({super.key});
@@ -39,24 +42,78 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
+                  width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       color: Constants.themeColor,
                       borderRadius: const BorderRadius.only(
                           bottomRight: Radius.circular(15),
                           bottomLeft: Radius.circular(15))),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 4.0.hp, vertical: 7.0.wp),
-                    child: Center(
-                      child: Text(
-                        "Yapmak İstediğiniz İşlem",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0.sp,
-                          //fontWeight: FontWeight.bold,
+                    padding: EdgeInsets.symmetric(vertical: 7.0.wp),
+                    child: Stack(children: [
+                      Center(
+                        child: Text(
+                          "Yapmak İstediğiniz İşlem",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0.sp,
+                            //fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
+                      Positioned(
+                        top: -0.7.hp,
+                        bottom: 0.9.hp,
+                        right: 1.0.wp,
+                        child: IconButton(
+                            onPressed: () {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Carpex Cihaz Sevk"),
+                                  content: const Text(
+                                      "Oturumdan çıkış yapmak istiyor musunuz?"),
+                                  actions: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                          elevation: 0),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Text(
+                                        'Hayır',
+                                        style: TextStyle(
+                                            color:
+                                                Color.fromARGB(194, 0, 0, 0)),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 255, 60, 60)),
+                                      onPressed: () {
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginPage()),
+                                          (route) => false,
+                                        );
+                                        // prefs!.clear();
+                                      },
+                                      child: const Text('Evet, Çıkış yap'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.exit_to_app_outlined,
+                              color: Colors.white,
+                            )),
+                      ),
+                    ]),
                   ),
                 ),
                 Expanded(
@@ -83,7 +140,8 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                                         ? Border.all(
                                             color: Colors.green, width: 5)
                                         : Border.all(
-                                            color: Colors.transparent)),
+                                            color: Colors.transparent,
+                                            width: 5)),
                                 height: 27.0.hp,
                                 width: 19.5.hp,
                                 child: Column(
@@ -131,7 +189,8 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                                   border: controller.isIade.value == true
                                       ? Border.all(
                                           color: Colors.green, width: 5)
-                                      : Border.all(color: Colors.transparent)),
+                                      : Border.all(
+                                          color: Colors.transparent, width: 5)),
                               height: 27.0.hp,
                               width: 19.5.hp,
                               child: Column(
@@ -182,7 +241,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                                 : Constants.themeColor.withOpacity(0.4),
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          child: Center(
+                          child: const Center(
                             child: Text(
                               "İşlemi Seç",
                               style: TextStyle(color: Colors.white),
@@ -201,9 +260,14 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
 
   islemSecFunction() {
     if (controller.isIade.value == true) {
-      Get.to(MusteriSec());
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MusteriSec(),
+          ),
+          (route) => false);
     } else if (controller.isSevk.value == true) {
-      Get.to(MyHomePage());
+      Get.to(const MyHomePage());
     } else if (controller.isIade.value == false ||
         controller.isSevk.value == false) {}
   }
