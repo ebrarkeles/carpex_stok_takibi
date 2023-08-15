@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:carpex_stok_takibi/constants/constants.dart';
 import 'package:carpex_stok_takibi/constants/fonts.dart';
 import 'package:carpex_stok_takibi/page/action_choose_page/action_choose_page.dart';
-import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
+import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -40,9 +40,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//  -----------------  CONTROLLER  ------------------//
-final controller = Get.put(MainController());
-
 /*----------------------------------------------------------------------------*/
 //!                      SEVK MÜŞTERİ SEÇ SAYFASI
 /*--------------------------------------------------------------------------- */
@@ -54,13 +51,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+/*----------------------------------------------------------------------------*/
+//TODOs                               VARIABLES                               */
+/*z----------------------------------------------------------------------------*/
   var selectedCustomer = null;
-  var result = '';
   var musteriler = [];
   var newMusteriler = [];
   bool isFirstLoading = false;
 
   SharedPreferences? prefs;
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                            GET COSTUMERS API                          */
+/* ---------------------------------------------------------------------------- */
+
   void getCustomersApi() async {
     setState(() {
       //müşteri listesi yüklenirkenki indicator
@@ -105,13 +109,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+/* ---------------------------------------------------------------------------- */
+//TODOs                                 INIT                                  */
+/* ---------------------------------------------------------------------------- */
+
   @override
   void initState() {
     super.initState();
     getCustomersApi();
   }
 
-  //Müşterileri getiren API
+/* ---------------------------------------------------------------------------- */
+//TODOs              CHECK COSTUMER IS SELECTED FUNCTION                      */
+/* ---------------------------------------------------------------------------- */
+
   void navigateToDeviceListPage() {
     if (selectedCustomer != null) {
       print("AAAAAAAAAAAAAAAA1 : ${selectedCustomer['id'].toString()}");
@@ -145,6 +156,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+/* ---------------------------------------------------------------------------- */
+//TODOs                            FILTER                                     */
+/* ---------------------------------------------------------------------------- */
+
   searchValue(String query) {
     final filteredValues = musteriler.where((element) {
       final value = element['value'].toString().toLowerCase();
@@ -155,8 +170,32 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+/* ---------------------------------------------------------------------------- */
+//TODOs                          CONTROLLER                                   */
+/* ---------------------------------------------------------------------------- */
+  final controller = Get.put(MainController());
   TextEditingController searchController = TextEditingController();
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                          EXIT POP UP                                  */
+/* ---------------------------------------------------------------------------- */
+
   Future<bool> showExitPopupHandle() => showExitPopup(context);
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                         SECİLEN MUSTERİ                               */
+/* ---------------------------------------------------------------------------- */
+
+  void handleItemSelected(selectedItem) {
+    setState(() {
+      selectedCustomer = selectedItem;
+    });
+    print('Seçilen öğe: $selectedItem');
+  }
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                               BUILD                                   */
+/* ---------------------------------------------------------------------------- */
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +289,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            ActionChoosePage(),
+                                            const ActionChoosePage(),
                                       ),
                                       (route) => false);
                                 },
@@ -401,12 +440,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-  }
-
-  void handleItemSelected(selectedItem) {
-    setState(() {
-      selectedCustomer = selectedItem;
-    });
-    print('Seçilen öğe: $selectedItem');
   }
 }

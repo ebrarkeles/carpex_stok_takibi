@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:carpex_stok_takibi/main.dart';
-import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
+import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
 import 'package:carpex_stok_takibi/page/dispatch/widgets/cihaz_listesi.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

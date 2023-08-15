@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
+import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';

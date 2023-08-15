@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:carpex_stok_takibi/page/rerturn/device_list_page.dart';
-import 'package:carpex_stok_takibi/utils/on_wii_pop.dart';
+import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,17 +20,30 @@ class ReturnQrScanPage extends StatefulWidget {
 }
 
 class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
+/*----------------------------------------------------------------------------*/
+//TODOs                               VARIABLES                               */
+/*----------------------------------------------------------------------------*/
+
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   bool scanningSuccessful = false;
   String scannedDevice = '';
   bool isQrStcokControlStatus = false;
+  SharedPreferences? prefs;
+
+/*----------------------------------------------------------------------------*/
+//TODOs                               DISPOSE                                 */
+/*----------------------------------------------------------------------------*/
 
   @override
   void dispose() {
     controller?.dispose();
     super.dispose();
   }
+
+/*----------------------------------------------------------------------------*/
+//TODOs                           QR VİEW SCANNER                             */
+/*----------------------------------------------------------------------------*/
 
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
@@ -44,28 +57,31 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
           showSnackBar('Qr okundu: CRP-$scannedDevice');
         }
       });
-      // } else {
-      // print("XXXXXXXXXXXXXXXXXXXXXXX");
-      // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: const Text(
-      //       'Farklı bir qr kod okuttunuz!',
-      //       style: TextStyle(fontSize: 18),
-      //     ),
-      //     backgroundColor: Colors.red,
-      //     behavior: SnackBarBehavior.floating,
-      //     margin: EdgeInsets.only(
-      //       bottom: MediaQuery.of(context).size.height - 85,
-      //     ),
-      //     duration: Duration(milliseconds: 800),
-      //   ),
-      // );
-      // }
+      /* } else {
+      print("XXXXXXXXXXXXXXXXXXXXXXX");
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Farklı bir qr kod okuttunuz!',
+            style: TextStyle(fontSize: 18),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 85,
+          ),
+          duration: Duration(milliseconds: 800),
+        ),
+      );
+      }*/
     });
   }
 
-  SharedPreferences? prefs;
+/*----------------------------------------------------------------------------*/
+//TODOs                 LİSTEYE EKLE SORGULARI VE API'Sİ                      */
+/*----------------------------------------------------------------------------*/
+
   void addTooList() async {
     setState(() {
       isQrStcokControlStatus = true;
@@ -144,7 +160,80 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
     });
   }
 
+/*----------------------------------------------------------------------------*/
+//TODOs               CİHAZ DAHA ÖNCE LİSTEYE EKLENNDİ Mİ                     */
+/*----------------------------------------------------------------------------*/
+
+  void _addDeviceToCihazlar(String deviceCode) {
+    // Kontrol ett cihazın var mı
+    bool isDeviceExists = Constants.tumEklenenCihazlar
+        .any((cihaz) => cihaz.cihazKodu == deviceCode);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    if (isDeviceExists) {
+      // Cihaz zaten var uyarı snacki göster
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Container(
+            alignment: Alignment.center,
+            height: 50,
+            color: Colors.red,
+            child: const Text(
+              'Cihaz zaten ekli.',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 85,
+          ),
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
+    } else {
+      // Cihaz yokyeni cihazı ekle
+      Cihaz newDevice = Cihaz(deviceCode);
+      setState(() {
+        Constants.iadeCihazListesi.add(newDevice);
+      });
+
+      // EKLENDİ snacki göster
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Container(
+            alignment: Alignment.center,
+            height: 50,
+            color: Colors.green,
+            child: const Text(
+              'Cihaz listeye eklendi',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 85,
+          ),
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
+    }
+  }
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                          EXIT POP UP                                  */
+/* ---------------------------------------------------------------------------- */
+
   Future<bool> showExitPopupHandle() => showExitPopup(context);
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                               BUILD                                   */
+/* ---------------------------------------------------------------------------- */
 
   @override
   Widget build(BuildContext context) {
@@ -379,66 +468,9 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
     );
   }
 
-  void _addDeviceToCihazlar(String deviceCode) {
-    // Kontrol ett cihazın var mı
-    bool isDeviceExists = Constants.tumEklenenCihazlar
-        .any((cihaz) => cihaz.cihazKodu == deviceCode);
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    if (isDeviceExists) {
-      // Cihaz zaten var uyarı snacki göster
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Container(
-            alignment: Alignment.center,
-            height: 50,
-            color: Colors.red,
-            child: const Text(
-              'Cihaz zaten ekli.',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height - 85,
-          ),
-          duration: const Duration(milliseconds: 800),
-        ),
-      );
-    } else {
-      // Cihaz yokyeni cihazı ekle
-      Cihaz newDevice = Cihaz(deviceCode);
-      setState(() {
-        Constants.iadeCihazListesi.add(newDevice);
-      });
-
-      // EKLENDİ snacki göster
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Container(
-            alignment: Alignment.center,
-            height: 50,
-            color: Colors.green,
-            child: const Text(
-              'Cihaz listeye eklendi',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height - 85,
-          ),
-          duration: const Duration(milliseconds: 800),
-        ),
-      );
-    }
-  }
+/*----------------------------------------------------------------------------*/
+//TODOs                            SHOW SNACKBAR                              */
+/*----------------------------------------------------------------------------*/
 
   void showSnackBar(String message) {
     if (scannedDevice.isNotEmpty) {

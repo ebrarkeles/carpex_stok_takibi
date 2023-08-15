@@ -1,5 +1,4 @@
 import 'package:carpex_stok_takibi/constants/fonts.dart';
-import 'package:carpex_stok_takibi/page/dispatch/okutma_sayfasi.dart';
 import 'package:carpex_stok_takibi/page/rerturn/customer_choose_page.dart';
 import 'package:carpex_stok_takibi/page/rerturn/return_qr_scan_page.dart';
 import 'package:carpex_stok_takibi/page/rerturn/widgets/return_device_list.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
-import '../../utils/on_wii_pop.dart';
+import '../../constants/utils/on_wii_pop.dart';
 
 class DeviceListPage extends StatefulWidget {
   final String selectedCustomer;

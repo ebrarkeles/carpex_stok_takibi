@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 import '../../constants/constants.dart';
 import '../../controller/mainController.dart';
-import '../../utils/on_wii_pop.dart';
+import '../../constants/utils/on_wii_pop.dart';
 import '../dispatch/login_page.dart';
 
 class ActionChoosePage extends StatefulWidget {
@@ -263,7 +263,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => MusteriSec(),
+            builder: (context) => const MusteriSec(),
           ),
           (route) => false);
     } else if (controller.isSevk.value == true) {

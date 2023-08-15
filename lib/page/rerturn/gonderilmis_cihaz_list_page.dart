@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, avoid_print, use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:carpex_stok_takibi/constants/fonts.dart';
@@ -8,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
 import '../../controller/mainController.dart';
-import '../../utils/on_wii_pop.dart';
+import '../../constants/utils/on_wii_pop.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -24,14 +26,27 @@ class SentDevicesList extends StatefulWidget {
 class _SentDevicesListState extends State<SentDevicesList> {
 // appbardan + butonuyla bu sayfaya gelir
 
+/*----------------------------------------------------------------------------*/
+//TODOs                               VARIABLES                               */
+/*----------------------------------------------------------------------------*/
+
   var selectedDevice;
   var gonderilmisCihazlar = [];
   var newGonderilmisCihazlar = [];
   bool isFirstLoading = false;
+  SharedPreferences? prefs;
+
+/*----------------------------------------------------------------------------*/
+//TODOs                          CONTROLLER                                   */
+/*----------------------------------------------------------------------------*/
 
   final controller = Get.put(MainController());
+  TextEditingController searchController = TextEditingController();
 
-  SharedPreferences? prefs;
+/*----------------------------------------------------------------------------*/
+//TODOs                          GET DEVİCES API                              */
+/*----------------------------------------------------------------------------*/
+
   void getCustomersApi() async {
     setState(() {
       //müşteri listesi yüklenirkenki indicator
@@ -75,18 +90,109 @@ class _SentDevicesListState extends State<SentDevicesList> {
     });
   }
 
+/*----------------------------------------------------------------------------*/
+//TODOs                            INIT                                       */
+/*----------------------------------------------------------------------------*/
+
   @override
   void initState() {
     super.initState();
     getCustomersApi();
   }
 
+/* ---------------------------------------------------------------------------- */
+//TODOs                         SECİLEN CİHAZ                                 */
+/* ---------------------------------------------------------------------------- */
+
+  void handleItemSelected(selectedItem) {
+    setState(() {
+      selectedDevice = selectedItem;
+    });
+    print('Seçilen CİHAZ: $selectedItem');
+  }
+
+/* ---------------------------------------------------------------------------- */
+//TODOs              CHECK COSTUMER IS SELECTED FUNCTION                      */
+/* ---------------------------------------------------------------------------- */
+
+//!api gelince düzenlenecek
+  void navigateToDeviceListPage() {
+    if (selectedDevice != null) {
+      print("AAAAAAAAAAAAAAAA1 : ${selectedDevice['id'].toString()}");
+      print("AAAAAAAAAAAAAAAA2 : ${selectedDevice['value'].toString()}");
+      Constants.musteri = selectedDevice['id'].toString();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => DeviceListPage(
+                    selectedCustomer: selectedDevice['value'].toString(),
+                  )),
+          (Route<dynamic> route) => false);
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Cihaz Seçimi Yapmadınız.'),
+          content: const Text('Geri dönmek istiyor musunuz?'),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white, elevation: 0),
+              onPressed: () => Navigator.of(context).pop(false),
+              //return false when click on "NO"
+              child: const Text(
+                'Hayır',
+                style: TextStyle(color: Color.fromARGB(194, 0, 0, 0)),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(43, 114, 176, 1),
+              ),
+              onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        DeviceListPage(selectedCustomer: Constants.musteri),
+                  ),
+                  (route) => false),
+              //return true when click on "Yes"
+              child: const Text('Evet, Geri dön'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                          EXIT POP UP                                  */
+/* ---------------------------------------------------------------------------- */
+
+  Future<bool> showExitPopupHandle() => showExitPopup(context);
+
+/* ---------------------------------------------------------------------------- */
+//TODOs                            FILTER                                     */
+/* ---------------------------------------------------------------------------- */
+
+  searchValue(String query) {
+    print("gonderilmisCihazlar listesi  :   $gonderilmisCihazlar");
+    print("newGonderilmisCihazlar listesi  :   $newGonderilmisCihazlar");
+
+    final filteredValues = newGonderilmisCihazlar.where((element) {
+      final value = element['value'].toString().toLowerCase();
+      return value.contains(query.toLowerCase());
+    }).toList();
+    setState(() {
+      gonderilmisCihazlar = filteredValues;
+    });
+  }
+
+/*----------------------------------------------------------------------------*/
+//TODOs                               BUILD                                   */
+/*----------------------------------------------------------------------------*/
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController searchController = TextEditingController();
-
-    Future<bool> showExitPopupHandle() => showExitPopup(context);
-
     return SafeArea(
       child: WillPopScope(
         onWillPop: showExitPopupHandle,
@@ -138,9 +244,10 @@ class _SentDevicesListState extends State<SentDevicesList> {
                       ],
                     ),
                     child: TextFormField(
-                      textAlign: TextAlign.center,
+                      // textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16),
                       controller: searchController,
+                      onChanged: searchValue,
                       decoration: const InputDecoration(
                         floatingLabelAlignment: FloatingLabelAlignment.center,
                         enabledBorder: UnderlineInputBorder(
@@ -154,6 +261,13 @@ class _SentDevicesListState extends State<SentDevicesList> {
                         ),
                         filled: true,
                         fillColor: Colors.white70,
+                        prefixIcon: Icon(
+                          Icons.search,
+                        ),
+                        prefixIconConstraints: BoxConstraints(
+                          minHeight: 60,
+                          minWidth: 50,
+                        ),
                       ),
                     ),
                   ),
@@ -265,62 +379,5 @@ class _SentDevicesListState extends State<SentDevicesList> {
         ),
       ),
     );
-  }
-
-  void handleItemSelected(selectedItem) {
-    setState(() {
-      selectedDevice = selectedItem;
-    });
-    print('Seçilen öğe: $selectedItem');
-  }
-
-//!api gelince düzenlenecek
-  //Müşterileri getiren API
-  void navigateToDeviceListPage() {
-    if (selectedDevice != null) {
-      print("AAAAAAAAAAAAAAAA1 : ${selectedDevice['id'].toString()}");
-      print("AAAAAAAAAAAAAAAA2 : ${selectedDevice['value'].toString()}");
-      Constants.musteri = selectedDevice['id'].toString();
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => DeviceListPage(
-                    selectedCustomer: selectedDevice['value'].toString(),
-                  )),
-          (Route<dynamic> route) => false);
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Cihaz Seçimi Yapmadınız.'),
-          content: const Text('Geri dönmek istiyor musunuz?'),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white, elevation: 0),
-              onPressed: () => Navigator.of(context).pop(false),
-              //return false when click on "NO"
-              child: Text(
-                'Hayır',
-                style: TextStyle(color: Color.fromARGB(194, 0, 0, 0)),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(43, 114, 176, 1),
-              ),
-              onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        DeviceListPage(selectedCustomer: Constants.musteri),
-                  ),
-                  (route) => false),
-              //return true when click on "Yes"
-              child: Text('Evet, Geri dön'),
-            ),
-          ],
-        ),
-      );
-    }
   }
 }
