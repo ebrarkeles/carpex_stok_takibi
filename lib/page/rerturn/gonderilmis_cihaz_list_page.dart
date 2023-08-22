@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, avoid_print, use_build_context_synchronously
+// ignore_for_file: prefer_typing_uninitialized_variables, avoid_print, use_build_context_synchronously, iterable_contains_unrelated_type
 
 import 'dart:convert';
 
@@ -9,12 +9,13 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
+import '../../constants/data_helpar.dart';
 import '../../controller/mainController.dart';
 import '../../constants/utils/on_wii_pop.dart';
 
 import 'package:http/http.dart' as http;
 
-import '../dispatch/login_page.dart';
+import '../action_choose_page/login_page.dart';
 
 class SentDevicesList extends StatefulWidget {
   const SentDevicesList({super.key});
@@ -47,33 +48,42 @@ class _SentDevicesListState extends State<SentDevicesList> {
 //TODOs                          GET DEVİCES API                              */
 /*----------------------------------------------------------------------------*/
 
-  void getCustomersApi() async {
+  void getDeviceListsApi() async {
     setState(() {
-      //müşteri listesi yüklenirkenki indicator
+      //cihaz listesi yüklenirkenki indicator
       isFirstLoading = true;
     });
     prefs = await SharedPreferences.getInstance();
     try {
       String username = controller.usernameController.value.toString();
+      String password = controller.passwordController.value.toString();
 
       String basicAuth =
-          'Basic ${base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'))}';
-      http.Response response = await http.get(
-          Uri.parse(
-              "http://95.70.201.96:39050/api/customers/${username.split('@').last.trim()}/children/"),
-          headers: <String, String>{'authorization': basicAuth});
+          'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+      http.Response response = await http.post(
+          Uri.parse("http://95.70.201.96:39050/api/device-list/"),
+          headers: <String, String>{'authorization': basicAuth},
+          body: {'tenant': username.split('@').last.trim()});
+
+      print("response.body :  ${response.body}");
+      //print("response.bodyBytes :  ${response.bodyBytes}");
 
       if (response.statusCode == 200) {
         var abc = jsonDecode(utf8.decode(response.bodyBytes));
+        var devices = abc['devices'];
+        print("devices:  $devices");
+
+        print("abc  :  $abc");
         for (var i = 0; i < response.body.length; i++) {
           gonderilmisCihazlar.add({
-            "value": abc[i]['name'].toString(),
-            "id": abc[i]['id'].toString()
+            "value": abc['devices'][i]['device_id'].toString(),
+            "id": abc['devices'][i]['owner_id'].toString()
           });
+          print("gonderilmisCihazlar : $gonderilmisCihazlar");
           newGonderilmisCihazlar = gonderilmisCihazlar;
         }
       } else {
-        print('başarısızmain');
+        print('başarısız Gönderilmiş Cihaz Listesi');
         prefs!.clear();
         Navigator.pushAndRemoveUntil(
             context,
@@ -97,12 +107,12 @@ class _SentDevicesListState extends State<SentDevicesList> {
   @override
   void initState() {
     super.initState();
-    getCustomersApi();
+    getDeviceListsApi();
   }
 
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 //TODOs                         SECİLEN CİHAZ                                 */
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 
   void handleItemSelected(selectedItem) {
     setState(() {
@@ -111,52 +121,32 @@ class _SentDevicesListState extends State<SentDevicesList> {
     print('Seçilen CİHAZ: $selectedItem');
   }
 
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 //TODOs              CHECK COSTUMER IS SELECTED FUNCTION                      */
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 
 //!api gelince düzenlenecek
   void navigateToDeviceListPage() {
     if (selectedDevice != null) {
-      print("AAAAAAAAAAAAAAAA1 : ${selectedDevice['id'].toString()}");
-      print("AAAAAAAAAAAAAAAA2 : ${selectedDevice['value'].toString()}");
-      Constants.musteri = selectedDevice['id'].toString();
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => DeviceListPage(
-                    selectedCustomer: selectedDevice['value'].toString(),
-                  )),
-          (Route<dynamic> route) => false);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      final cihaz = Cihaz(
+          selectedDevice['value']); // Seçilen cihazı Cihaz nesnesine dönüştür
+      print("cihaz.cihazKodu ${cihaz.cihazKodu}");
+      print(
+          "Constants.iadeCihazListesi.contains(cihaz.cihazKodu) : ${Constants.iadeCihazListesi.contains(cihaz.cihazKodu)}");
+      continueAddDeviceList(selectedDevice);
     } else {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Cihaz Seçimi Yapmadınız.'),
-          content: const Text('Geri dönmek istiyor musunuz?'),
+          title: const Text('Uyarı'),
+          content: const Text('Devam etmek için seçili cihaz kodu yok.'),
           actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white, elevation: 0),
-              onPressed: () => Navigator.of(context).pop(false),
-              //return false when click on "NO"
-              child: const Text(
-                'Hayır',
-                style: TextStyle(color: Color.fromARGB(194, 0, 0, 0)),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(43, 114, 176, 1),
-              ),
-              onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        DeviceListPage(selectedCustomer: Constants.musteri),
-                  ),
-                  (route) => false),
-              //return true when click on "Yes"
-              child: const Text('Evet, Geri dön'),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Tamam'),
             ),
           ],
         ),
@@ -164,26 +154,85 @@ class _SentDevicesListState extends State<SentDevicesList> {
     }
   }
 
-/* ---------------------------------------------------------------------------- */
+  void continueAddDeviceList(deviceCode) {
+    bool isDeviceExists = Constants.iadeCihazListesi
+        .any((cihaz) => cihaz.cihazKodu == deviceCode);
+    print(" isDeviceExists :  $isDeviceExists");
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    if (isDeviceExists) {
+      // Cihaz zaten var uyarı snacki göster
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Container(
+            alignment: Alignment.center,
+            height: 50,
+            color: Colors.red,
+            child: const Text(
+              'Cihaz zaten ekli.',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 85,
+          ),
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
+    } else {
+      // Cihaz yokyeni cihazı ekle
+      Cihaz newDevice = Cihaz(deviceCode);
+      setState(() {
+        Constants.iadeCihazListesi.add(newDevice);
+      });
+
+      // EKLENDİ snacki göster
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Container(
+            alignment: Alignment.center,
+            height: 50,
+            color: Colors.green,
+            child: const Text(
+              'Cihaz listeye eklendi',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 85,
+          ),
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
+    }
+  }
+/*----------------------------------------------------------------------------*/
 //TODOs                          EXIT POP UP                                  */
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 
   Future<bool> showExitPopupHandle() => showExitPopup(context);
 
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 //TODOs                            FILTER                                     */
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 
   searchValue(String query) {
     print("gonderilmisCihazlar listesi  :   $gonderilmisCihazlar");
-    print("newGonderilmisCihazlar listesi  :   $newGonderilmisCihazlar");
 
-    final filteredValues = newGonderilmisCihazlar.where((element) {
+    final filteredValues = gonderilmisCihazlar.where((element) {
       final value = element['value'].toString().toLowerCase();
       return value.contains(query.toLowerCase());
     }).toList();
     setState(() {
-      gonderilmisCihazlar = filteredValues;
+      newGonderilmisCihazlar = filteredValues;
     });
   }
 

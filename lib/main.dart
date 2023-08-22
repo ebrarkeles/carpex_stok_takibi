@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controller/mainController.dart';
-import 'page/dispatch/login_page.dart';
+import 'page/action_choose_page/login_page.dart';
 import 'page/dispatch/qr_device_list_page.dart';
 
 void main() {

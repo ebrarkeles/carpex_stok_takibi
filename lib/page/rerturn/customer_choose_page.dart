@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/constants.dart';
 import '../../controller/mainController.dart';
 import '../../constants/utils/on_wii_pop.dart';
-import '../dispatch/login_page.dart';
+import '../action_choose_page/login_page.dart';
 
 import 'package:http/http.dart' as http;
 

@@ -220,7 +220,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
                                 ),
                               ),
                               Text(
-                                "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
+                                "${Constants.iadeCihazListesi.length.toString()} cihaz eklendi",
                                 style: const TextStyle(color: Colors.black54),
                               ),
                             ],

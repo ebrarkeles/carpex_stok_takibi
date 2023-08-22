@@ -1,5 +1,5 @@
 class Cihaz {
-  dynamic cihazKodu;
+  String cihazKodu;
 
   Cihaz(this.cihazKodu);
 }

@@ -71,7 +71,7 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
                     borderOnForeground: true,
                     child: ListTile(
                       title: Text(
-                        '${index + 1}.  CRP-${cihaz.cihazKodu.replaceAll(' ', '')}'
+                        '${index + 1}.  ${cihaz.cihazKodu.replaceAll(' ', '')}'
                             .toString(),
                         style: const TextStyle(letterSpacing: 0.90),
                       ),
