@@ -84,10 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (response.statusCode == 200) {
         var abc = jsonDecode(utf8.decode(response.bodyBytes));
+        print("abcccc : $abc");
         for (var i = 0; i < response.body.length; i++) {
           musteriler.add({
             "value": abc[i]['name'].toString(),
-            "id": abc[i]['id'].toString()
+            "id": abc[i]['id'].toString(),
+            "parent": abc[i]['parent'].toString()
           });
           newMusteriler = musteriler;
         }
@@ -127,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (selectedCustomer != null) {
       print("AAAAAAAAAAAAAAAA1 : ${selectedCustomer['id'].toString()}");
       print("AAAAAAAAAAAAAAAA2 : ${selectedCustomer['value'].toString()}");
+      print("AAAAAAAAAAAAAAAA3 : ${selectedCustomer['parent'].toString()}");
       Constants.musteri = selectedCustomer['id'].toString();
       Navigator.pushAndRemoveUntil(
           context,
@@ -357,6 +360,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               itemBuilder: (context, index) {
                                 final item = newMusteriler[index];
                                 print("item ${item}");
+                                print(musteriler);
+                                print(Constants.MusteriList);
                                 if (selectedCustomer != null &&
                                     selectedCustomer['value'].toString() ==
                                         item['value'].toString()) {

@@ -1,8 +1,10 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:carpex_stok_takibi/constants/constants.dart';
+import 'package:carpex_stok_takibi/constants/fonts.dart';
 import 'package:carpex_stok_takibi/page/action_choose_page/action_choose_page.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class FinishPage extends StatefulWidget {
   const FinishPage({Key? key});
@@ -17,47 +19,56 @@ class _FinishPageState extends State<FinishPage> {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.check_circle,
-              size: 100,
-              color: Colors.green,
+            Padding(
+              padding: EdgeInsets.only(top: 5.0.hp),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Lottie.asset("assets/lottie/data.json"),
+                  SizedBox(
+                    height: 5.0.hp,
+                  ),
+                  Text(
+                    'İşlem başarılı!',
+                    style: TextStyle(
+                        fontSize: 20.0.sp, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'Cihazlar sevk edildi.',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Padding(
+              padding: EdgeInsets.only(bottom: 5.0.hp),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    Constants.iadeCihazListesi = [];
+                  });
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const ActionChoosePage()),
+                      (Route<dynamic> route) => false);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 2, 143, 77),
+                      borderRadius: BorderRadius.circular(20)),
+                  width: 65.0.wp,
+                  height: 7.0.hp,
+                  child: Center(
+                      child: Text(
+                    "Anasayfaya Dön",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15.0.sp),
+                  )),
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'İşlem başarılı!',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            Constants.tumEklenenCihazlar = [];
-                          });
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const ActionChoosePage()),
-                              (Route<dynamic> route) => false);
-                        },
-                        child: const Text("Anasayfaya Dön")),
-                  ],
-                )
-              ],
+              ),
             ),
           ],
         ),

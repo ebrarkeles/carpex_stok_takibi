@@ -80,6 +80,7 @@ class _SentDevicesListState extends State<SentDevicesList> {
             "id": abc['devices'][i]['owner_id'].toString()
           });
           print("gonderilmisCihazlar : $gonderilmisCihazlar");
+          Constants.gonderilmisCihazList = gonderilmisCihazlar;
           newGonderilmisCihazlar = gonderilmisCihazlar;
         }
       } else {
@@ -131,10 +132,10 @@ class _SentDevicesListState extends State<SentDevicesList> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       final cihaz = Cihaz(
           selectedDevice['value']); // Seçilen cihazı Cihaz nesnesine dönüştür
-      print("cihaz.cihazKodu ${cihaz.cihazKodu}");
+
       print(
           "Constants.iadeCihazListesi.contains(cihaz.cihazKodu) : ${Constants.iadeCihazListesi.contains(cihaz.cihazKodu)}");
-      continueAddDeviceList(selectedDevice);
+      continueAddDeviceList(selectedDevice['value']);
     } else {
       showDialog(
         context: context,
@@ -406,7 +407,7 @@ class _SentDevicesListState extends State<SentDevicesList> {
                                   children: [
                                     Container(
                                       margin: EdgeInsets.only(left: 4.0.wp),
-                                      child: const Text("Devam Et"),
+                                      child: const Text("Cihazı Ekle"),
                                     ),
                                     SizedBox(
                                       width: 2.0.wp,

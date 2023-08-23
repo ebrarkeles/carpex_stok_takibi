@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,7 +19,11 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
   void removeDevice(Cihaz cihaz) {
     setState(() {
       tumIadeEklenenCihazlar.remove(cihaz);
+      print("tumIadeEklenenCihazlar.length : $tumIadeEklenenCihazlar");
+      print("tumIadeEklenenCihazlar.length : ${Constants.iadeCihazListesi}");
     });
+    print(tumIadeEklenenCihazlar);
+    print(Constants.iadeCihazListesi);
   }
 
   @override
@@ -71,7 +77,7 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
                     borderOnForeground: true,
                     child: ListTile(
                       title: Text(
-                        '${index + 1}.  ${cihaz.cihazKodu.replaceAll(' ', '')}'
+                        '${index + 1}.  ${cihaz.cihazKodu.toString().replaceAll(' ', '')}'
                             .toString(),
                         style: const TextStyle(letterSpacing: 0.90),
                       ),
@@ -97,7 +103,7 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
         return AlertDialog(
           title: const Text('Cihazı Sil'),
           content: Text(
-              'CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
+              '${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
           actions: [
             TextButton(
               onPressed: () {

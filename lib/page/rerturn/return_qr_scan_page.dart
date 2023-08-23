@@ -1,6 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, file_names, use_build_context_synchronously, avoid_print
-
-import 'dart:convert';
+// ignore_for_file: library_private_types_in_public_api, file_names, use_build_context_synchronously, avoid_print, prefer_const_constructors
 
 import 'package:carpex_stok_takibi/page/rerturn/device_list_page.dart';
 import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
@@ -10,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
 import '../../constants/data_helpar.dart';
-import 'package:http/http.dart' as http;
 
 class ReturnQrScanPage extends StatefulWidget {
   const ReturnQrScanPage({Key? key}) : super(key: key);
@@ -55,6 +52,7 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
           scanningSuccessful = true;
           scannedDevice = scanData.code!;
           showSnackBar('Qr okundu: CRP-$scannedDevice');
+          print("scannedDevice : CRP-$scannedDevice");
         }
       });
       /* } else {
@@ -79,82 +77,51 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
   }
 
 /*----------------------------------------------------------------------------*/
-//TODOs                 LİSTEYE EKLE SORGULARI VE API'Sİ                      */
+//TODOs                 LİSTEYE EKLE SORGULARI                     */
 /*----------------------------------------------------------------------------*/
-
-  void addTooList() async {
+  void addToIadeList() {
     setState(() {
       isQrStcokControlStatus = true;
     });
-    prefs = await SharedPreferences.getInstance();
 
-    print('prefs.get("username") ${prefs!.get("username")}');
-    print('prefs.get("password") ${prefs!.get("password")}');
+    String crpDeviceId = "CRP-${scannedDevice.toUpperCase()}";
+    bool found = false;
 
-    String username = prefs!.get("username").toString();
-
-    var body = {
-      "owner_id": username.split('@').last.trim(),
-      "device_id": "CRP-${scannedDevice.replaceAll(' ', '').toUpperCase()}"
-    };
-    print("body1 : $body");
-    print("body2 : ${json.encode(body)}");
-
-    try {
-      String basicAuth =
-          'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
-      print(basicAuth);
-
-      http.Response response = await http.post(
-          Uri.parse("http://95.70.201.96:39050/api/device-stock-control/"),
-          body: json.encode(body),
-          headers: <String, String>{
-            'authorization': basicAuth,
-            'Content-Type': 'application/json; charset=UTF-8',
-          });
-
-      if (response.statusCode == 200) {
-        //buraya bak
-        print("11111111111dene ${response.body.toString()}");
-        print("11111111111deneeee ${response.bodyBytes.toString()}");
-        var abc = jsonDecode(utf8.decode(response.bodyBytes));
-        print("22222deneee ${abc['status']}");
-        print("22222deneee ${abc['status'].runtimeType}");
-
-        if (abc['status'] == true) {
-          _addDeviceToCihazlar(scannedDevice);
-        } else {
-          ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const SizedBox(
-                height: 20,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Bu cihaz stokta yok!",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-              ),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height / 2,
-              ),
-              duration: const Duration(milliseconds: 800),
-            ),
-          );
-        }
-      } else {
-        print("server'da değilsin");
+    for (var e in Constants.gonderilmisCihazList) {
+      if (e['value'].toString() == crpDeviceId) {
+        _addDeviceToCihazlar(scannedDevice);
+        found = true;
+        break;
       }
-    } catch (e) {
-      print(e.toString());
     }
+
+    if (!found) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: SizedBox(
+            height: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Bu cihaz ${Constants.musteri} firmasına ait bir cihaz değil!",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height / 2,
+          ),
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
+    }
+
     setState(() {
       isQrStcokControlStatus = false;
     });
@@ -165,13 +132,12 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
 /*----------------------------------------------------------------------------*/
 
   void _addDeviceToCihazlar(String deviceCode) {
-    // Kontrol ett cihazın var mı
-    bool isDeviceExists = Constants.tumEklenenCihazlar
-        .any((cihaz) => cihaz.cihazKodu == deviceCode);
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    // Kontrol et, cihazın zaten var mı?
+    String crpDeviceId = "CRP-${deviceCode.toUpperCase()}";
+    bool isDeviceExists =
+        Constants.iadeCihazListesi.any((e) => e.cihazKodu == crpDeviceId);
 
     if (isDeviceExists) {
-      // Cihaz zaten var uyarı snacki göster
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -194,8 +160,8 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
         ),
       );
     } else {
-      // Cihaz yokyeni cihazı ekle
-      Cihaz newDevice = Cihaz(deviceCode);
+      // Cihaz yok, yeni cihazı ekle
+      Cihaz newDevice = Cihaz(crpDeviceId);
       setState(() {
         Constants.iadeCihazListesi.add(newDevice);
       });
@@ -414,8 +380,7 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
                                   if (scannedDevice.isNotEmpty) {
                                     ScaffoldMessenger.of(context)
                                         .hideCurrentSnackBar();
-                                    //_addDeviceToCihazlar(scannedDevice);
-                                    addTooList();
+                                    addToIadeList();
                                   } else {
                                     showDialog(
                                       context: context,

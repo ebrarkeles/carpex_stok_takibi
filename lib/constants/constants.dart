@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:carpex_stok_takibi/constants/data_helpar.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ class Constants {
 
   static List<Cihaz> tumEklenenCihazlar = [];
   static List<Cihaz> iadeCihazListesi = [];
+  static var gonderilmisCihazList = [];
 
   static String musteri = '';
 
@@ -25,4 +28,7 @@ class Constants {
     splashIconSize: 250,
     centered: true,
   );
+
+  static var MusteriList = [];
+  static String buyerId = "";
 }

@@ -1,13 +1,23 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
+import 'dart:convert';
+
 import 'package:carpex_stok_takibi/constants/fonts.dart';
 import 'package:carpex_stok_takibi/page/rerturn/customer_choose_page.dart';
 import 'package:carpex_stok_takibi/page/rerturn/return_qr_scan_page.dart';
 import 'package:carpex_stok_takibi/page/rerturn/widgets/return_device_list.dart';
 import 'package:carpex_stok_takibi/page/rerturn/gonderilmis_cihaz_list_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
 import '../../constants/utils/on_wii_pop.dart';
+import '../../controller/mainController.dart';
+
+import 'package:http/http.dart' as http;
+
+import '../dispatch/finish_page.dart';
 
 class DeviceListPage extends StatefulWidget {
   final String selectedCustomer;
@@ -22,82 +32,100 @@ class _DeviceListPageState extends State<DeviceListPage> {
   //EXIT POP UP   ------------------------------------------------------------*/
   Future<bool> showExitPopupHandle() => showExitPopup(context);
 /*----------------------------------------------------------------------------*/
+  final controller = Get.put(MainController());
 
   //SEND   ------------------------------------------------------------*/
 
   void sendDevicesApi() async {
-    // Navigator.of(context).pop();
-    // setState(() {
-    //   sendCircularIsActive = true;
-    // });
-    // prefs = await SharedPreferences.getInstance();
-    // print('prefs.get("username") ${prefs!.get("username")}');
-    // print('prefs.get("password") ${prefs!.get("password")}');
-    // var listem = [];
-    // for (var i = 0; i < Constants.tumEklenenCihazlar.length; i++) {
-    //   print(Constants.tumEklenenCihazlar[i].cihazKodu);
-    //   listem.add(
-    //       "CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}"
-    //           .toString()
-    //           .toUpperCase());
-    // }
+    Navigator.of(context).pop();
+    setState(() {
+      sendCircularIsActive = true;
+    });
+    var listem = [];
 
-    // var body = {
-    //   "username": prefs!.get("username").toString(),
-    //   "buyer_id": Constants.musteri.toString(),
-    //   "devices": listem
-    // };
-    // print("body1 : $body");
-    // print("body2 : ${json.encode(body)}");
-    // try {
-    //   String basicAuth =
-    //       'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
-    //   print(basicAuth);
+    prefs = await SharedPreferences.getInstance();
+    print('prefs.get("username") ${prefs!.get("username")}');
+    print('prefs.get("password") ${prefs!.get("password")}');
 
-    //   http.Response response = await http.post(
-    //       Uri.parse("http://95.70.201.96:39050/api/device-transaction/"),
-    //       body: json.encode(body),
-    //       headers: <String, String>{
-    //         'authorization': basicAuth,
-    //         'Content-Type': 'application/json; charset=UTF-8',
-    //       });
+    for (var i = 0; i < Constants.iadeCihazListesi.length; i++) {
+      print(Constants.iadeCihazListesi[i].cihazKodu);
+      String cihazKodu =
+          Constants.iadeCihazListesi[i].cihazKodu.toString().toUpperCase();
 
-    //   print("11111111111 ${response.body}");
-    // if (response.statusCode == 200) {
-    //   print("2222222222 ${response.body}");
-    // Navigator.pushAndRemoveUntil(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (BuildContext context) => const FinishPage()),
-    //   (Route<dynamic> route) => false,
-    // );
-    // } else {
-    //   print('başarısızqr');
-    // setState(() {
-    //   sendCircularIsActive = false;
-    // });
-    //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: const Text(
-    //           'Cihaz gönderme başarısız!',
-    //           style: TextStyle(fontSize: 18),
-    //         ),
-    //         backgroundColor: Colors.red,
-    //         behavior: SnackBarBehavior.floating,
-    //         margin: EdgeInsets.only(
-    //           bottom: MediaQuery.of(context).size.height - 85,
-    //         ),
-    //         duration: const Duration(milliseconds: 800),
-    //       ),
-    //     );
-    //   }
-    // } catch (e) {
-    //   print(e.toString());
-    //   setState(() {
-    //     sendCircularIsActive = false;
-    //   });
-    // }
+      if (!cihazKodu.startsWith("CRP-")) {
+        cihazKodu = "CRP-$cihazKodu";
+      }
+
+      cihazKodu = cihazKodu.replaceAll(" ", "");
+
+      listem.add(cihazKodu);
+      /*listem.add(
+          "CRP-${Constants.iadeCihazListesi[i].cihazKodu.toString().replaceAll(" ", '')}"
+              .toString()
+              .toUpperCase());*/
+    }
+
+    var body = {
+      "username": prefs!.get("username").toString(),
+      "devices": listem,
+      "buyer_id": Constants.musteri.toString()
+    };
+
+    print("body1 : $body");
+    print("body2 : ${json.encode(body)}");
+
+    try {
+      String basicAuth =
+          'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
+      print(basicAuth);
+
+      http.Response response = await http.post(
+          Uri.parse("http://95.70.201.96:39050/api/device-transaction/"),
+          body: json.encode(body),
+          headers: <String, String>{
+            'authorization': basicAuth,
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
+
+      print("11111111111 ${response.body}");
+      if (response.statusCode == 200) {
+        setState(() {
+          sendCircularIsActive = false;
+        });
+        print("2222222222 ${response.body}");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => const FinishPage()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        print('başarısızIadeee');
+        setState(() {
+          sendCircularIsActive = false;
+        });
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Cihaz iade işlemi başarısız!',
+              style: TextStyle(fontSize: 18),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 85,
+            ),
+            duration: const Duration(milliseconds: 800),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      setState(() {
+        sendCircularIsActive = false;
+      });
+    }
   }
 
 /*----------------------------------------------------------------------------*/
@@ -314,8 +342,9 @@ class _DeviceListPageState extends State<DeviceListPage> {
     );
   }
 
+  // Liste boş dolu kontrolü
   Future<void> _showConfirmationDialog() async {
-    if (Constants.tumEklenenCihazlar.isEmpty) {
+    if (Constants.iadeCihazListesi.isEmpty) {
       showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -347,12 +376,12 @@ class _DeviceListPageState extends State<DeviceListPage> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Cihaz Gönderme Onayı'),
+            title: const Text('Cihaz İade Onayı'),
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
                   Text(
-                      '${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
+                      '${Constants.iadeCihazListesi.length} cihaz ${Constants.musteri} firmasından iade alınacak!'),
                 ],
               ),
             ),
@@ -387,7 +416,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
                         children: [
                           Container(
                             margin: const EdgeInsets.only(right: 6),
-                            child: const Text("Gönder"),
+                            child: const Text("İade Oluştur"),
                           ),
                           const Icon(Icons.send_rounded),
                         ],
@@ -403,99 +432,3 @@ class _DeviceListPageState extends State<DeviceListPage> {
     }
   }
 }
-
-
-/* Expanded(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xffDDDDDD),
-              blurRadius: 6.0,
-              spreadRadius: 2.0,
-              offset: Offset(0.0, 0.0),
-            )
-          ],
-        ),
-        child: tumQrEklenenCihazlar.isEmpty
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Lottie.asset(
-                      'assets/lottie/not_found_device_list.json',
-                    ),
-                  ),
-                  const SizedBox(height: 0),
-                  const Text(
-                    "İade edilecek cihaz yok.",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 13,
-                      color: Color.fromRGBO(43, 114, 176, 1),
-                    ),
-                  ),
-                ],
-              )
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: tumQrEklenenCihazlar.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Cihaz cihaz = tumQrEklenenCihazlar[index];
-                  return Card(
-                    borderOnForeground: true,
-                    child: ListTile(
-                      title: Text(
-                        '${index + 1}.  CRP-${cihaz.cihazKodu.replaceAll(' ', '')}'
-                            .toString(),
-                        style: const TextStyle(letterSpacing: 0.90),
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete,
-                            color: Colors.red[900]?.withOpacity(0.6)),
-                        onPressed: () {
-                          showDeleteConfirmationDialog(cihaz);
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-      ),
-    );
-  }
-
-  void showDeleteConfirmationDialog(Cihaz cihaz) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Cihazı Sil'),
-          content: Text(
-              'CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // İletişim kutusunu kapat
-              },
-              child: const Text('İptal'),
-            ),
-            TextButton(
-              onPressed: () {
-                removeDevice(cihaz); // Cihazı listeden sil
-                Navigator.pop(context); // İletişim kutusunu kapat
-              },
-              child: const Text('Sil'),
-            ),
-          ],
-        );
-      },
-    ); */

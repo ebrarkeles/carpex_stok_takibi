@@ -56,12 +56,19 @@ class _MusteriSecState extends State<MusteriSec> {
 
       if (response.statusCode == 200) {
         var abc = jsonDecode(utf8.decode(response.bodyBytes));
+        print("abcccc : $abc");
         for (var i = 0; i < response.body.length; i++) {
           musteriler.add({
             "value": abc[i]['name'].toString(),
-            "id": abc[i]['id'].toString()
+            "id": abc[i]['id'].toString(),
+            "parent": abc[i]['parent'].toString()
           });
+
+          Constants.MusteriList = musteriler;
+
           newMusteriler = musteriler;
+          print(musteriler);
+          print(Constants.MusteriList);
         }
       } else {
         print('başarısızmain');
@@ -92,6 +99,7 @@ class _MusteriSecState extends State<MusteriSec> {
     if (selectedCustomer != null) {
       print("AAAAAAAAAAAAAAAA1 : ${selectedCustomer['id'].toString()}");
       print("AAAAAAAAAAAAAAAA2 : ${selectedCustomer['value'].toString()}");
+      print("AAAAAAAAAAAAAAAA3 : ${selectedCustomer['parent'].toString()}");
       Constants.musteri = selectedCustomer['id'].toString();
       Navigator.pushAndRemoveUntil(
           context,
