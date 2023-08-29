@@ -161,7 +161,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                                       height: 2.0.hp,
                                     ),
                                     Text(
-                                      "Chaz Sevk",
+                                      "Cihaz Sevk",
                                       style: TextStyle(
                                           fontSize: 14.0.sp,
                                           fontWeight: FontWeight.w700,
@@ -209,7 +209,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                                     height: 2.0.hp,
                                   ),
                                   Text(
-                                    "Chaz İade",
+                                    "Cihaz İade",
                                     style: TextStyle(
                                         fontSize: 14.0.sp,
                                         fontWeight: FontWeight.w700,

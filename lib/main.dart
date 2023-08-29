@@ -53,7 +53,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 /*----------------------------------------------------------------------------*/
 //TODOs                               VARIABLES                               */
-/*z----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
   var selectedCustomer = null;
   var musteriler = [];
   var newMusteriler = [];
