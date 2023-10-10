@@ -129,13 +129,25 @@ class _SentDevicesListState extends State<SentDevicesList> {
 //!api gelince düzenlenecek
   void navigateToDeviceListPage() {
     if (selectedDevice != null) {
+      var cihazKodu = selectedDevice['value'];
+
+      if (!cihazKodu.toString().startsWith("CRP-")) {
+        cihazKodu = "CRP-$cihazKodu";
+        print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+      } else {
+        print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+      }
+
+      cihazKodu = cihazKodu.toString().replaceAll(" ", "");
+
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      final cihaz = Cihaz(
-          selectedDevice['value']); // Seçilen cihazı Cihaz nesnesine dönüştür
+      final cihaz = Cihaz(cihazKodu); // Seçilen cihazı Cihaz nesnesine dönüştür
 
       print(
           "Constants.iadeCihazListesi.contains(cihaz.cihazKodu) : ${Constants.iadeCihazListesi.contains(cihaz.cihazKodu)}");
       continueAddDeviceList(selectedDevice['value']);
+
+      print("cihazKodu: ${cihazKodu.toString()}");
     } else {
       showDialog(
         context: context,
@@ -185,8 +197,9 @@ class _SentDevicesListState extends State<SentDevicesList> {
         ),
       );
     } else {
-      // Cihaz yokyeni cihazı ekle
+      // Cihaz yok yeni cihazı ekle
       Cihaz newDevice = Cihaz(deviceCode);
+
       setState(() {
         Constants.iadeCihazListesi.add(newDevice);
       });

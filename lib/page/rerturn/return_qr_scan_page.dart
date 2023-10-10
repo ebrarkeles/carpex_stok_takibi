@@ -51,8 +51,11 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
         if (scannedDevice != newScannedDevice) {
           scanningSuccessful = true;
           scannedDevice = scanData.code!;
-          showSnackBar('Qr okundu: CRP-$scannedDevice');
-          print("scannedDevice : CRP-$scannedDevice");
+          if (!scannedDevice.startsWith("CRP-")) {
+            scannedDevice = "CRP-$scannedDevice";
+          }
+          showSnackBar('Qr okundu: $scannedDevice');
+          print("scannedDevice : $scannedDevice");
         }
       });
       /* } else {
@@ -84,18 +87,37 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
       isQrStcokControlStatus = true;
     });
 
-    String crpDeviceId = "CRP-${scannedDevice.toUpperCase()}";
+    String crpDeviceId = scannedDevice.toUpperCase().replaceAll(" ", "");
+
+    if (!crpDeviceId.startsWith("CRP-")) {
+      crpDeviceId = "CRP-$crpDeviceId";
+      print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+    } else {
+      print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+    }
+
     bool found = false;
 
     for (var e in Constants.gonderilmisCihazList) {
+      var cihazKodu = e['value'];
+
+      if (!cihazKodu.toString().startsWith("CRP-")) {
+        cihazKodu = "CRP-$cihazKodu";
+        print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+      } else {
+        print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+      }
+
+      cihazKodu = cihazKodu..toString().replaceAll(" ", "");
       if (e['value'].toString() == crpDeviceId) {
-        _addDeviceToCihazlar(scannedDevice);
+        _addDeviceToCihazlar(crpDeviceId);
         found = true;
         break;
       }
     }
 
     if (!found) {
+      print("cihaz gönderilmiş cihaz listesinde bulunmuyor. Found: $found");
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -133,7 +155,15 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
 
   void _addDeviceToCihazlar(String deviceCode) {
     // Kontrol et, cihazın zaten var mı?
-    String crpDeviceId = "CRP-${deviceCode.toUpperCase()}";
+    String crpDeviceId = deviceCode.toUpperCase().replaceAll(" ", "");
+
+    if (!crpDeviceId.startsWith("CRP-")) {
+      crpDeviceId = "CRP-$crpDeviceId";
+      print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+    } else {
+      print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+    }
+
     bool isDeviceExists =
         Constants.iadeCihazListesi.any((e) => e.cihazKodu == crpDeviceId);
 
@@ -273,8 +303,12 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
                             TextField(
                               controller: TextEditingController(
                                   text: scannedDevice.isNotEmpty
-                                      ? "CRP-${scannedDevice.replaceAll(' ', '')}"
-                                          .toString()
+                                      ? !scannedDevice.startsWith("CRP-")
+                                          ? scannedDevice =
+                                              "CRP-${scannedDevice.toUpperCase().toString()}"
+                                          : scannedDevice = scannedDevice
+                                              .toUpperCase()
+                                              .toString()
                                       : ""),
                               readOnly: true,
                               autofocus: true,
