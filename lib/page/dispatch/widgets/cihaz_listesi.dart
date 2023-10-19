@@ -25,79 +25,104 @@ class _Qr_ListState extends State<Qr_List> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xffDDDDDD),
-              blurRadius: 6.0,
-              spreadRadius: 2.0,
-              offset: Offset(0.0, 0.0),
-            )
-          ],
-        ),
-        child: tumQrEklenenCihazlar.isEmpty
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Lottie.asset(
-                      'assets/lottie/not_found_device_list.json',
-                    ),
-                  ),
-                  const SizedBox(height: 0),
-                  const Text(
-                    "Gösterilecek cihaz yok.",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 13,
-                      color: Color.fromRGBO(43, 114, 176, 1),
-                    ),
-                  ),
-                ],
-              )
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: tumQrEklenenCihazlar.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Cihaz cihaz = tumQrEklenenCihazlar[index];
-                  var cihazim = cihaz.cihazKodu
-                      .replaceAll(' ', '')
-                      .toUpperCase()
-                      .toString();
-                  if (!cihazim.startsWith("CRP-")) {
-                    cihazim = "CRP-$cihazim";
-                    print("cihaz kodunda CRP- bulunmuyordu eklendi.");
-                  } else {
-                    print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
-                  }
-                  return Card(
-                    borderOnForeground: true,
-                    child: ListTile(
-                      title: Text(
-                        '${index + 1}.  $cihazim',
-                        style: const TextStyle(letterSpacing: 0.90),
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete,
-                            color: Colors.red[900]?.withOpacity(0.6)),
-                        onPressed: () {
-                          showDeleteConfirmationDialog(cihaz);
-                        },
-                      ),
-                    ),
-                  );
-                },
+      child: Column(children: [
+        SizedBox(
+          height: 35,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Cihaz Listesi",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-      ),
+              Text(
+                "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
+                style: const TextStyle(color: Colors.black54),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xffDDDDDD),
+                  blurRadius: 6.0,
+                  spreadRadius: 2.0,
+                  offset: Offset(0.0, 0.0),
+                )
+              ],
+            ),
+            child: tumQrEklenenCihazlar.isEmpty
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Lottie.asset(
+                          'assets/lottie/not_found_device_list.json',
+                        ),
+                      ),
+                      const SizedBox(height: 0),
+                      const Text(
+                        "Gösterilecek cihaz yok.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 13,
+                          color: Color.fromRGBO(43, 114, 176, 1),
+                        ),
+                      ),
+                    ],
+                  )
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: tumQrEklenenCihazlar.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Cihaz cihaz = tumQrEklenenCihazlar[index];
+                      var cihazim = cihaz.cihazKodu
+                          .replaceAll(' ', '')
+                          .toUpperCase()
+                          .toString();
+                      if (!cihazim.startsWith("CRP-")) {
+                        cihazim = "CRP-$cihazim";
+                        print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+                      } else {
+                        print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+                      }
+                      return Card(
+                        borderOnForeground: true,
+                        child: ListTile(
+                          title: Text(
+                            '${index + 1}.  $cihazim',
+                            style: const TextStyle(letterSpacing: 0.90),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete,
+                                color: Colors.red[900]?.withOpacity(0.6)),
+                            onPressed: () {
+                              showDeleteConfirmationDialog(cihaz);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ),
+      ]),
     );
   }
 

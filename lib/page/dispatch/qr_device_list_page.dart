@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:carpex_stok_takibi/constants/colors.dart';
 import 'package:carpex_stok_takibi/main.dart';
 import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
 import 'package:carpex_stok_takibi/page/dispatch/widgets/cihaz_listesi.dart';
@@ -277,20 +278,15 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                       ],
                     ),
                     child: TextFormField(
+                      enabled: false,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16, color: black),
                       controller: searchController,
                       decoration: const InputDecoration(
                         floatingLabelAlignment: FloatingLabelAlignment.center,
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        errorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
                         filled: true,
                         fillColor: Colors.white70,
                       ),
@@ -304,27 +300,6 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          SizedBox(
-                            height: 35,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Cihaz Listesi",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "${Constants.tumEklenenCihazlar.length.toString()} cihaz eklendi",
-                                  style: const TextStyle(color: Colors.black54),
-                                ),
-                              ],
-                            ),
-                          ),
                           const Qr_List(),
                           Container(
                             margin: const EdgeInsets.only(top: 20),

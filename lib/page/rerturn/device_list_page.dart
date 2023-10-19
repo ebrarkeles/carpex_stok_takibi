@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../constants/colors.dart';
 import '../../constants/constants.dart';
 import '../../constants/urls.dart';
 import '../../constants/utils/on_wii_pop.dart';
@@ -203,20 +204,15 @@ class _DeviceListPageState extends State<DeviceListPage> {
                     ],
                   ),
                   child: TextFormField(
+                    enabled: false,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16, color: black),
                     controller: searchController,
                     decoration: const InputDecoration(
                       floatingLabelAlignment: FloatingLabelAlignment.center,
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
-                      errorBorder: UnderlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
                       filled: true,
                       fillColor: Colors.white70,
                     ),
@@ -230,27 +226,27 @@ class _DeviceListPageState extends State<DeviceListPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        SizedBox(
-                          height: 35,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Cihaz Listesi",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "${Constants.iadeCihazListesi.length}  cihaz eklendi",
-                                style: const TextStyle(color: Colors.black54),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // SizedBox(
+                        //   height: 35,
+                        //   child: Row(
+                        //     crossAxisAlignment: CrossAxisAlignment.center,
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       const Text(
+                        //         "Cihaz Listesi",
+                        //         style: TextStyle(
+                        //           color: Colors.black,
+                        //           fontSize: 14,
+                        //           fontWeight: FontWeight.bold,
+                        //         ),
+                        //       ),
+                        //       Text(
+                        //         "${Constants.iadeCihazListesi.length}  cihaz eklendi",
+                        //         style: const TextStyle(color: Colors.black54),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         const ReturnDeviceList(),
                         Container(
                           margin: const EdgeInsets.only(top: 20),
