@@ -1,10 +1,12 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../constants/constants.dart';
 import '../../../constants/data_helpar.dart';
+import '../../../controller/mainController.dart';
 
 class ReturnDeviceList extends StatefulWidget {
   const ReturnDeviceList({super.key});
@@ -19,12 +21,19 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
   void removeDevice(Cihaz cihaz) {
     setState(() {
       tumIadeEklenenCihazlar.remove(cihaz);
-      print("tumIadeEklenenCihazlar.length : $tumIadeEklenenCihazlar");
-      print("tumIadeEklenenCihazlar.length : ${Constants.iadeCihazListesi}");
     });
+    print("tumIadeEklenenCihazlar : $tumIadeEklenenCihazlar");
+    print("Constants.iadeCihazListesi : ${Constants.iadeCihazListesi}");
+
     print(tumIadeEklenenCihazlar);
     print(Constants.iadeCihazListesi);
   }
+
+/*----------------------------------------------------------------------------*/
+//TODOs                          CONTROLLER                                   */
+/*----------------------------------------------------------------------------*/
+
+  final controller = Get.put(MainController());
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +123,7 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
             TextButton(
               onPressed: () {
                 removeDevice(cihaz); // Cihazı listeden sil
-                Navigator.pop(context); // İletişim kutusunu kapat
+                Get.back(); // İletişim kutusunu kapat
               },
               child: const Text('Sil'),
             ),

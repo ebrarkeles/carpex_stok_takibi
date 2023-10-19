@@ -6,9 +6,11 @@ import 'package:carpex_stok_takibi/main.dart';
 import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
 import 'package:carpex_stok_takibi/page/dispatch/widgets/cihaz_listesi.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
+import '../../constants/urls.dart';
 import 'finish_page.dart';
 import 'okutma_sayfasi.dart';
 import 'package:http/http.dart' as http;
@@ -22,14 +24,27 @@ class QrDeviceListPage extends StatefulWidget {
 }
 
 class _QrDeviceListPageState extends State<QrDeviceListPage> {
+/*----------------------------------------------------------------------------*/
+//TODOs                               VARIABLES                               */
+/*----------------------------------------------------------------------------*/
+
   SharedPreferences? prefs;
   TextEditingController searchController = TextEditingController();
   bool sendCircularIsActive = false;
+
+/*----------------------------------------------------------------------------*/
+//TODOs                           INIT STATE                                  */
+/*----------------------------------------------------------------------------*/
+
   @override
   void initState() {
     super.initState();
     searchController.text = Constants.musteri.toString();
   }
+
+/*----------------------------------------------------------------------------*/
+//TODOs                       SEND DEVİCES API                                */
+/*----------------------------------------------------------------------------*/
 
   void sendDevicesApi() async {
     Navigator.of(context).pop();
@@ -42,10 +57,18 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     var listem = [];
     for (var i = 0; i < Constants.tumEklenenCihazlar.length; i++) {
       print(Constants.tumEklenenCihazlar[i].cihazKodu);
-      listem.add(
-          "CRP-${Constants.tumEklenenCihazlar[i].cihazKodu.toString().replaceAll(" ", '')}"
-              .toString()
-              .toUpperCase());
+      var sevkCihazi = Constants.tumEklenenCihazlar[i].cihazKodu
+          .toString()
+          .replaceAll(" ", '');
+
+      if (!sevkCihazi.startsWith("CRP-")) {
+        sevkCihazi = "CRP-$sevkCihazi";
+        print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+      } else {
+        print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+      }
+
+      listem.add(sevkCihazi);
     }
 
     var body = {
@@ -61,7 +84,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
       print(basicAuth);
 
       http.Response response = await http.post(
-          Uri.parse("http://95.70.201.96:39050/api/device-transaction/"),
+          Uri.parse("$API_URL/device-transaction/"),
           body: json.encode(body),
           headers: <String, String>{
             'authorization': basicAuth,
@@ -72,12 +95,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
 
       if (response.statusCode == 200) {
         print("2222222222 ${response.body}");
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => const FinishPage()),
-          (Route<dynamic> route) => false,
-        );
+        Get.to(const FinishPage());
+        Constants.tumEklenenCihazlar.clear();
       } else {
         print('başarısızqr');
         setState(() {
@@ -107,7 +126,108 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     }
   }
 
+/*----------------------------------------------------------------------------*/
+//TODOs                          EXIT POP UP                                  */
+/*----------------------------------------------------------------------------*/
+
   Future<bool> showExitPopupHandle() => showExitPopup(context);
+
+/*----------------------------------------------------------------------------*/
+//TODOs                      CIHAZ SEVK ONAY DİYALOG                          */
+/*----------------------------------------------------------------------------*/
+
+  Future<void> _showConfirmationDialog() async {
+    if (Constants.tumEklenenCihazlar.isEmpty) {
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Cihaz Blunamadı'),
+            content: const SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(
+                      'Sevk edilecek bir cihaz bulunamadı. Lütfen önce cihaz ekleyiniz.'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Tamam'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Cihaz Gönderme Onayı'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(
+                      '${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
+                ],
+              ),
+            ),
+            actions: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      elevation: 0,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text(
+                      'Vazgeç',
+                      style: TextStyle(color: Color.fromARGB(194, 0, 0, 0)),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Constants.themeColor,
+                    ),
+                    onPressed: () => sendDevicesApi(),
+                    //return true when click on "Yes"
+                    child: SizedBox(
+                      width: 100,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(right: 6),
+                            child: const Text("Gönder"),
+                          ),
+                          const Icon(Icons.send_rounded),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        },
+      );
+    }
+  }
+
+/*----------------------------------------------------------------------------*/
+//TODOs                               BUILD                                   */
+/*----------------------------------------------------------------------------*/
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +250,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
             ),
             leading: IconButton(
               onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => const MyHomePage()),
-                  (Route<dynamic> route) => false,
-                );
+                Get.to(const MyHomePage());
+                Constants.tumEklenenCihazlar.clear();
               },
               icon: const Icon(
                 Icons.arrow_back_rounded,
@@ -297,94 +413,5 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _showConfirmationDialog() async {
-    if (Constants.tumEklenenCihazlar.isEmpty) {
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Cihaz Blunamadı'),
-            content: const SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text(
-                      'Sevk edilecek bir cihaz bulunamadı. Lütfen önce cihaz ekleyiniz.'),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Tamam'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Cihaz Gönderme Onayı'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text(
-                      '${Constants.tumEklenenCihazlar.length} cihaz ${Constants.musteri} firmasına gönderilecek!'),
-                ],
-              ),
-            ),
-            actions: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      elevation: 0,
-                    ),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      'Vazgeç',
-                      style: TextStyle(color: Color.fromARGB(194, 0, 0, 0)),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Constants.themeColor,
-                    ),
-                    onPressed: () => sendDevicesApi(),
-                    //return true when click on "Yes"
-                    child: SizedBox(
-                      width: 100,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(right: 6),
-                            child: const Text("Gönder"),
-                          ),
-                          const Icon(Icons.send_rounded),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          );
-        },
-      );
-    }
   }
 }

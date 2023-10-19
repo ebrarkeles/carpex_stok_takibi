@@ -10,12 +10,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
 import '../../constants/data_helpar.dart';
+import '../../constants/urls.dart';
 import '../../controller/mainController.dart';
 import '../../constants/utils/on_wii_pop.dart';
 
 import 'package:http/http.dart' as http;
 
-import '../action_choose_page/login_page.dart';
+import '../login_page.dart';
 
 class SentDevicesList extends StatefulWidget {
   const SentDevicesList({super.key});
@@ -61,9 +62,9 @@ class _SentDevicesListState extends State<SentDevicesList> {
       String basicAuth =
           'Basic ${base64.encode(utf8.encode('$username:$password'))}';
       http.Response response = await http.post(
-          Uri.parse("http://95.70.201.96:39050/api/device-list/"),
+          Uri.parse("$API_URL/device-list/"),
           headers: <String, String>{'authorization': basicAuth},
-          body: {'tenant': username.split('@').last.trim()});
+          body: {'tenant': Constants.musteri.toString()});
 
       print("response.body :  ${response.body}");
       //print("response.bodyBytes :  ${response.bodyBytes}");
@@ -86,12 +87,7 @@ class _SentDevicesListState extends State<SentDevicesList> {
       } else {
         print('başarısız Gönderilmiş Cihaz Listesi');
         prefs!.clear();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => const LoginPage(),
-            ),
-            (Route<dynamic> route) => false);
+        Get.to(const LoginPage());
       }
     } catch (e) {
       print(e.toString());

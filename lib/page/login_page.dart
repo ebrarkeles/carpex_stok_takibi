@@ -12,6 +12,8 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../constants/urls.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -44,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
     try {
       print("AAAAAAAAAAA ${controller.usernameController.value.toString()}");
       print("BBBBBBBBBBB ${controller.passwordController.value.toString()}");
-      http.Response response = await http
-          .post(Uri.parse("http://95.70.201.96:39050/api/login/"), body: {
+      http.Response response =
+          await http.post(Uri.parse("$API_URL/login/"), body: {
         'username': controller.usernameController.value.toString(),
         'password': controller.passwordController.value.toString()
       });
@@ -323,31 +325,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Obx(() => Checkbox(
-                                value: controller.rememberMe.value,
-                                onChanged: (value) {
-                                  controller.rememberMe.value = value!;
-                                  _saveRememberMe(value);
-                                },
-                              )),
-                          const Text('Beni Hatırla'),
-                        ],
-                      ),
-                      TextButton(
-                        child: const Text(
-                          "Temizle",
-                          style:
-                              TextStyle(color: Color.fromRGBO(43, 114, 176, 1)),
-                        ),
-                        onPressed: () {
-                          controller.passwordController.value = "";
-                          controller.usernameController.value = "";
-                        },
-                      ),
+                      Obx(() => Checkbox(
+                            value: controller.rememberMe.value,
+                            onChanged: (value) {
+                              controller.rememberMe.value = value!;
+                              _saveRememberMe(value);
+                            },
+                          )),
+                      const Text('Beni Hatırla'),
                     ],
                   ),
                   //  const SizedBox(height: 15),

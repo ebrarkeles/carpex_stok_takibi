@@ -53,29 +53,14 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
           scannedDevice = scanData.code!;
           if (!scannedDevice.startsWith("CRP-")) {
             scannedDevice = "CRP-$scannedDevice";
+            print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+          } else {
+            print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
           }
           showSnackBar('Qr okundu: $scannedDevice');
           print("scannedDevice : $scannedDevice");
         }
       });
-      /* } else {
-      print("XXXXXXXXXXXXXXXXXXXXXXX");
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'Farklı bir qr kod okuttunuz!',
-            style: TextStyle(fontSize: 18),
-          ),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height - 85,
-          ),
-          duration: Duration(milliseconds: 800),
-        ),
-      );
-      }*/
     });
   }
 
@@ -221,15 +206,48 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
     }
   }
 
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 //TODOs                          EXIT POP UP                                  */
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 
   Future<bool> showExitPopupHandle() => showExitPopup(context);
 
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
+//TODOs                            SHOW SNACKBAR                              */
+/*----------------------------------------------------------------------------*/
+
+  void showSnackBar(String message) {
+    if (scannedDevice.isNotEmpty) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: SizedBox(
+            height: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  message,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height / 2,
+          ),
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
+    }
+  }
+
+/*----------------------------------------------------------------------------*/
 //TODOs                               BUILD                                   */
-/* ---------------------------------------------------------------------------- */
+/*----------------------------------------------------------------------------*/
 
   @override
   Widget build(BuildContext context) {
@@ -465,38 +483,5 @@ class _ReturnQrScanPageState extends State<ReturnQrScanPage> {
         ),
       ),
     );
-  }
-
-/*----------------------------------------------------------------------------*/
-//TODOs                            SHOW SNACKBAR                              */
-/*----------------------------------------------------------------------------*/
-
-  void showSnackBar(String message) {
-    if (scannedDevice.isNotEmpty) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: SizedBox(
-            height: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  message,
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height / 2,
-          ),
-          duration: const Duration(milliseconds: 800),
-        ),
-      );
-    }
   }
 }

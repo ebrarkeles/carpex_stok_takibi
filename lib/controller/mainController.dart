@@ -30,4 +30,6 @@ class MainController extends GetxController {
     isSevk.value = true;
     isIade.value = false;
   }
+
+  var gonderilmisCihazlar = [].obs;
 }

@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import '../../constants/constants.dart';
 import '../../controller/mainController.dart';
 import '../../constants/utils/on_wii_pop.dart';
-import 'login_page.dart';
+import '../login_page.dart';
 
 class ActionChoosePage extends StatefulWidget {
   const ActionChoosePage({super.key});

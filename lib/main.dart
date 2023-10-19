@@ -12,9 +12,11 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'constants/urls.dart';
 import 'controller/mainController.dart';
-import 'page/action_choose_page/login_page.dart';
+import 'page/login_page.dart';
 import 'page/dispatch/qr_device_list_page.dart';
+import 'services/connectivity_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +26,21 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    /// Internet connection is tracked to alert the user and take action on connectivity change
+    ConnectivityService.connectivityMethod();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'));
       http.Response response = await http.get(
           Uri.parse(
-              "http://95.70.201.96:39050/api/customers/${username.split('@').last.trim()}/children/"),
+              "$API_URL/customers/${username.split('@').last.trim()}/children/"),
           headers: <String, String>{'authorization': basicAuth});
 
       if (response.statusCode == 200) {

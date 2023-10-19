@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
+import '../../constants/urls.dart';
 import '../../constants/utils/on_wii_pop.dart';
 import '../../controller/mainController.dart';
 
@@ -68,7 +69,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
     var body = {
       "username": prefs!.get("username").toString(),
       "devices": listem,
-      "buyer_id": Constants.musteri.toString()
+      "buyer_id": prefs!.get("username").toString().split('@').last.trim()
     };
 
     print("body1 : $body");
@@ -80,7 +81,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
       print(basicAuth);
 
       http.Response response = await http.post(
-          Uri.parse("http://95.70.201.96:39050/api/device-transaction/"),
+          Uri.parse("$API_URL/device-transaction/"),
           body: json.encode(body),
           headers: <String, String>{
             'authorization': basicAuth,
@@ -159,12 +160,8 @@ class _DeviceListPageState extends State<DeviceListPage> {
           ),
           leading: IconButton(
             onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => const MusteriSec()),
-                (Route<dynamic> route) => false,
-              );
+              Get.to(const MusteriSec());
+              Constants.tumEklenenCihazlar.clear();
             },
             icon: const Icon(
               Icons.arrow_back_rounded,
@@ -248,7 +245,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
                                 ),
                               ),
                               Text(
-                                "${Constants.iadeCihazListesi.length.toString()} cihaz eklendi",
+                                "${Constants.iadeCihazListesi.length}  cihaz eklendi",
                                 style: const TextStyle(color: Colors.black54),
                               ),
                             ],

@@ -10,9 +10,10 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
+import '../../constants/urls.dart';
 import '../../controller/mainController.dart';
 import '../../constants/utils/on_wii_pop.dart';
-import '../action_choose_page/login_page.dart';
+import '../login_page.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -33,6 +34,7 @@ class _MusteriSecState extends State<MusteriSec> {
   var musteriler = [];
   var newMusteriler = [];
   bool isFirstLoading = false;
+  var gonderilmisCihazlar = [];
 
 //  -----------------  CONTROLLER  ------------------//
   final controller = Get.put(MainController());
@@ -51,7 +53,7 @@ class _MusteriSecState extends State<MusteriSec> {
           'Basic ${base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'))}';
       http.Response response = await http.get(
           Uri.parse(
-              "http://95.70.201.96:39050/api/customers/${username.split('@').last.trim()}/children/"),
+              "$API_URL/customers/${username.split('@').last.trim()}/children/"),
           headers: <String, String>{'authorization': basicAuth});
 
       if (response.statusCode == 200) {
@@ -101,6 +103,7 @@ class _MusteriSecState extends State<MusteriSec> {
       print("AAAAAAAAAAAAAAAA2 : ${selectedCustomer['value'].toString()}");
       print("AAAAAAAAAAAAAAAA3 : ${selectedCustomer['parent'].toString()}");
       Constants.musteri = selectedCustomer['id'].toString();
+      getDeviceListsApi();
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -127,6 +130,53 @@ class _MusteriSecState extends State<MusteriSec> {
         ),
       );
     }
+  }
+
+  void getDeviceListsApi() async {
+    setState(() {
+      //cihaz listesi yüklenirkenki indicator
+      isFirstLoading = true;
+    });
+    prefs = await SharedPreferences.getInstance();
+    try {
+      String username = controller.usernameController.value.toString();
+      String password = controller.passwordController.value.toString();
+
+      String basicAuth =
+          'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+      http.Response response = await http.post(
+          Uri.parse("$API_URL/device-list/"),
+          headers: <String, String>{'authorization': basicAuth},
+          body: {'tenant': Constants.musteri.toString()});
+
+      print("response.body :  ${response.body}");
+      //print("response.bodyBytes :  ${response.bodyBytes}");
+
+      if (response.statusCode == 200) {
+        var abc = jsonDecode(utf8.decode(response.bodyBytes));
+        var devices = abc['devices'];
+        print("devices:  $devices");
+
+        print("abc  :  $abc");
+        for (var i = 0; i < response.body.length; i++) {
+          gonderilmisCihazlar.add({
+            "value": abc['devices'][i]['device_id'].toString(),
+            "id": abc['devices'][i]['owner_id'].toString()
+          });
+          print("gonderilmisCihazlar : $gonderilmisCihazlar");
+          Constants.gonderilmisCihazList = gonderilmisCihazlar;
+        }
+      } else {
+        print('başarısız Gönderilmiş Cihaz Listesi');
+        prefs!.clear();
+        Get.to(const ActionChoosePage());
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    setState(() {
+      isFirstLoading = false;
+    });
   }
 
   searchValue(String query) {
