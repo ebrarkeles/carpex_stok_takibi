@@ -115,10 +115,12 @@ class _LoginPageState extends State<LoginPage> {
 
   _loadRememberMe() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    controller.rememberMe.value = prefs.getBool('rememberMe')!;
+    controller.rememberMe.value = prefs.getBool('rememberMe') ?? false;
+
     if (controller.rememberMe.value == true) {
       controller.usernameController.value = prefs.getString('username')!;
       _textEditingController1.text = prefs.getString('username')!;
+
       controller.passwordController.value = prefs.getString('password')!;
       _textEditingController2.text = prefs.getString('password')!;
     } else {

@@ -113,46 +113,40 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           InkWell(
-                              onTap: () {
-                                controller.isSevk.value == false ? controller.selectChazSevk() : controller.isSevk.value = false;
-                                // print("iade(${controller.isIade.value}) ve sevk(${controller.isSevk.value})");
-                              },
-                              child: Obx(
-                                () => Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white70,
-                                      border: controller.isSevk.value == true
-                                          ? Border.all(color: Colors.green, width: 5)
-                                          : Border.all(color: Colors.transparent, width: 5)),
-                                  height: 27.0.hp,
-                                  width: 19.5.hp,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: 19.0.hp,
-                                        width: 18.0.hp,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(15),
-                                        ),
-                                        child: Image.asset(
-                                          "assets/images/sevk-2.png",
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 2.0.hp,
-                                      ),
-                                      Text(
-                                        "Cihaz Sevk",
-                                        style: TextStyle(fontSize: 14.0.sp, fontWeight: FontWeight.w700, letterSpacing: 0.7),
-                                      ),
-                                    ],
-                                  ),
+                            onTap: () {
+                              controller.isSevk.value == false ? controller.selectChazSevk() : controller.isSevk.value = false;
+                              // print("iade(${controller.isIade.value}) ve sevk(${controller.isSevk.value})");
+                            },
+                            child: Obx(
+                              () => Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white70,
+                                  border: controller.isSevk.value == true
+                                      ? Border.all(color: Colors.green, width: 5)
+                                      : Border.all(color: Colors.transparent, width: 5),
                                 ),
-                              )),
-                          SizedBox(
-                            width: 5.0.wp,
+                                width: 19.5.hp,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      height: 19.0.hp,
+                                      width: 18.0.hp,
+                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+                                      child: Image.asset("assets/images/sevk-2.png", fit: BoxFit.fitHeight),
+                                    ),
+                                    SizedBox(height: 2.0.hp),
+                                    Text(
+                                      "Cihaz Sevk",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 14.0.sp, fontWeight: FontWeight.w700, letterSpacing: 0.7),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
+                          SizedBox(width: 5.0.wp),
                           InkWell(
                             onTap: () {
                               controller.isIade.value == false ? controller.selectChazIade() : controller.isIade.value = false;
@@ -161,28 +155,25 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                             child: Obx(
                               () => Container(
                                 decoration: BoxDecoration(
-                                    color: Colors.white70,
-                                    border: controller.isIade.value == true
-                                        ? Border.all(color: Colors.green, width: 5)
-                                        : Border.all(color: Colors.transparent, width: 5)),
-                                height: 27.0.hp,
+                                  color: Colors.white70,
+                                  border: controller.isIade.value == true
+                                      ? Border.all(color: Colors.green, width: 5)
+                                      : Border.all(color: Colors.transparent, width: 5),
+                                ),
                                 width: 19.5.hp,
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Container(
                                       height: 19.0.hp,
                                       width: 18.0.hp,
-                                      decoration: BoxDecoration(
-                                        //color: Colors.green,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
+                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
                                       child: Image.asset("assets/images/images.png"),
                                     ),
-                                    SizedBox(
-                                      height: 2.0.hp,
-                                    ),
+                                    SizedBox(height: 2.0.hp),
                                     Text(
                                       "Cihaz İade",
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(fontSize: 14.0.sp, fontWeight: FontWeight.w700, letterSpacing: 0.7),
                                     ),
                                   ],
