@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../constants/constants.dart';
-import '../../../constants/data_helpar.dart';
+import '../../../constants/data_helper.dart';
 import '../../../controller/mainController.dart';
 
 class ReturnDeviceList extends StatefulWidget {
@@ -22,11 +22,11 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
     setState(() {
       tumIadeEklenenCihazlar.remove(cihaz);
     });
-    print("tumIadeEklenenCihazlar : $tumIadeEklenenCihazlar");
-    print("Constants.iadeCihazListesi : ${Constants.iadeCihazListesi}");
+    // print("tumIadeEklenenCihazlar : $tumIadeEklenenCihazlar");
+    // print("Constants.iadeCihazListesi : ${Constants.iadeCihazListesi}");
 
-    print(tumIadeEklenenCihazlar);
-    print(Constants.iadeCihazListesi);
+    // print(tumIadeEklenenCihazlar);
+    // print(Constants.iadeCihazListesi);
   }
 
 /*----------------------------------------------------------------------------*/
@@ -110,13 +110,11 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
                           borderOnForeground: true,
                           child: ListTile(
                             title: Text(
-                              '${index + 1}.  ${cihaz.cihazKodu.toString().replaceAll(' ', '')}'
-                                  .toString(),
+                              '${index + 1}.  ${cihaz.cihazKodu.toString().replaceAll(' ', '')}'.toString(),
                               style: const TextStyle(letterSpacing: 0.90),
                             ),
                             trailing: IconButton(
-                              icon: Icon(Icons.delete,
-                                  color: Colors.red[900]?.withOpacity(0.6)),
+                              icon: Icon(Icons.delete, color: Colors.red[900]?.withOpacity(0.6)),
                               onPressed: () {
                                 showDeleteConfirmationDialog(cihaz);
                               },
@@ -138,8 +136,7 @@ class _ReturnDeviceListState extends State<ReturnDeviceList> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Cihazı Sil'),
-          content: Text(
-              '${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
+          content: Text('${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
           actions: [
             TextButton(
               onPressed: () {

@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.carpex.stoktakibi">
+    package="com.carpex.cihazsevk">
+
     <uses-permission android:name="android.permission.INTERNET"/>
+
    <application
         android:label="Carpex Cihaz Sevk"
         android:name="${applicationName}"

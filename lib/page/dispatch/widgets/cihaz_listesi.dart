@@ -1,7 +1,7 @@
 // ignore_for_file: camel_case_types, avoid_print
 
-import 'package:carpex_stok_takibi/constants/constants.dart';
-import 'package:carpex_stok_takibi/constants/data_helpar.dart';
+import 'package:carpex_cihaz_sevk/constants/constants.dart';
+import 'package:carpex_cihaz_sevk/constants/data_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -92,15 +92,12 @@ class _Qr_ListState extends State<Qr_List> {
                     itemCount: tumQrEklenenCihazlar.length,
                     itemBuilder: (BuildContext context, int index) {
                       Cihaz cihaz = tumQrEklenenCihazlar[index];
-                      var cihazim = cihaz.cihazKodu
-                          .replaceAll(' ', '')
-                          .toUpperCase()
-                          .toString();
+                      var cihazim = cihaz.cihazKodu.replaceAll(' ', '').toUpperCase().toString();
                       if (!cihazim.startsWith("CRP-")) {
                         cihazim = "CRP-$cihazim";
-                        print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+                        // print("cihaz kodunda CRP- bulunmuyordu eklendi.");
                       } else {
-                        print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+                        // print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
                       }
                       return Card(
                         borderOnForeground: true,
@@ -110,8 +107,7 @@ class _Qr_ListState extends State<Qr_List> {
                             style: const TextStyle(letterSpacing: 0.90),
                           ),
                           trailing: IconButton(
-                            icon: Icon(Icons.delete,
-                                color: Colors.red[900]?.withOpacity(0.6)),
+                            icon: Icon(Icons.delete, color: Colors.red[900]?.withOpacity(0.6)),
                             onPressed: () {
                               showDeleteConfirmationDialog(cihaz);
                             },
@@ -132,8 +128,7 @@ class _Qr_ListState extends State<Qr_List> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Cihazı Sil'),
-          content: Text(
-              'CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
+          content: Text('CRP-${cihaz.cihazKodu} kodlu cihazı silmek istediğinize emin misiniz?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -154,7 +149,6 @@ class _Qr_ListState extends State<Qr_List> {
     );
   }
 }
-
 
 /*
 return Padding(

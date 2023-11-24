@@ -1,8 +1,8 @@
 // ignore_for_file: use_key_in_widget_constructors
 
-import 'package:carpex_stok_takibi/constants/constants.dart';
-import 'package:carpex_stok_takibi/constants/fonts.dart';
-import 'package:carpex_stok_takibi/page/action_choose_page/action_choose_page.dart';
+import 'package:carpex_cihaz_sevk/constants/constants.dart';
+import 'package:carpex_cihaz_sevk/constants/fonts.dart';
+import 'package:carpex_cihaz_sevk/page/action_choose_page/action_choose_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -33,8 +33,7 @@ class _FinishPageState extends State<FinishPage> {
                   ),
                   Text(
                     'İşlem başarılı!',
-                    style: TextStyle(
-                        fontSize: 20.0.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20.0.sp, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -47,25 +46,16 @@ class _FinishPageState extends State<FinishPage> {
                     Constants.iadeCihazListesi = [];
                   });
                   Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              const ActionChoosePage()),
-                      (Route<dynamic> route) => false);
+                      context, MaterialPageRoute(builder: (BuildContext context) => const ActionChoosePage()), (Route<dynamic> route) => false);
                 },
                 child: Container(
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 2, 143, 77),
-                      borderRadius: BorderRadius.circular(20)),
+                  decoration: BoxDecoration(color: const Color.fromARGB(255, 2, 143, 77), borderRadius: BorderRadius.circular(20)),
                   width: 65.0.wp,
                   height: 7.0.hp,
                   child: Center(
                       child: Text(
                     "Anasayfaya Dön",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15.0.sp),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15.0.sp),
                   )),
                 ),
               ),

@@ -1,5 +1,5 @@
-name: carpex_stok_takibi
-description: A new Flutter project.
+name: carpex_cihaz_sevk
+description: This is a Carpex Cihaz Sevk flutter application
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

@@ -1,4 +1,4 @@
-package com.carpex.stoktakibi
+package com.carpex.cihazsevk
 
 import io.flutter.embedding.android.FlutterActivity
 

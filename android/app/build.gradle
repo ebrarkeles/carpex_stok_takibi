@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.carpex.stoktakibi"
+        applicationId "com.carpex.cihazsevk"
         minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

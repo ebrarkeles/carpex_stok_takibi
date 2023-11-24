@@ -1,3 +1,3 @@
-# carpex_stok_takibi
+# carpex_cihaz_sevk
 
-This a Carpex Cihaz Sevk flutter application
+This is a Carpex Cihaz Sevk flutter application

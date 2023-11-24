@@ -1,83 +1,44 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings, avoid_print, unnecessary_brace_in_string_interps, avoid_unnecessary_containers, use_build_context_synchronously, avoid_init_to_null
+// ignore_for_file: avoid_print, use_build_context_synchronously, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
 
-import 'package:carpex_cihaz_sevk/constants/constants.dart';
 import 'package:carpex_cihaz_sevk/constants/fonts.dart';
-import 'package:carpex_cihaz_sevk/constants/utils/on_will_pop.dart';
 import 'package:carpex_cihaz_sevk/page/action_choose_page/action_choose_page.dart';
+import 'package:carpex_cihaz_sevk/page/return/device_list_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'constants/urls.dart';
-import 'controller/mainController.dart';
-import 'page/dispatch/qr_device_list_page.dart';
-import 'page/login_page.dart';
-import 'services/connectivity_service.dart';
+import '../../constants/constants.dart';
+import '../../constants/urls.dart';
+import '../../constants/utils/on_will_pop.dart';
+import '../../controller/mainController.dart';
+import '../login_page.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
-  runApp(const MyApp());
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MusteriSec extends StatefulWidget {
+  const MusteriSec({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MusteriSec> createState() => _MusteriSecState();
 }
 
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-
-    /// Internet connection is tracked to alert the user and take action on connectivity change
-    ConnectivityService.connectivityMethod();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Carpex Cihaz Sevk',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: Constants.getSplashScreen,
-    );
-  }
-}
-
+class _MusteriSecState extends State<MusteriSec> {
+  //EXIT POP UP   ------------------------------------------------------------*/
+  Future<bool> showExitPopupHandle() => showExitPopup(context);
 /*----------------------------------------------------------------------------*/
-//!                      SEVK MÜŞTERİ SEÇ SAYFASI
-/*--------------------------------------------------------------------------- */
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-/*----------------------------------------------------------------------------*/
-//TODOs                               VARIABLES                               */
-/*----------------------------------------------------------------------------*/
-  var selectedCustomer = null;
+  var selectedCustomer;
+  var result = '';
   var musteriler = [];
   var newMusteriler = [];
   bool isFirstLoading = false;
+  var gonderilmisCihazlar = [];
+
+//  -----------------  CONTROLLER  ------------------//
+  final controller = Get.put(MainController());
 
   SharedPreferences? prefs;
-
-/* ---------------------------------------------------------------------------- */
-//TODOs                            GET COSTUMERS API                          */
-/* ---------------------------------------------------------------------------- */
-
   void getCustomersApi() async {
     setState(() {
       //müşteri listesi yüklenirkenki indicator
@@ -88,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
       String username = controller.usernameController.value.toString();
 
       String basicAuth =
-          'Basic ' + base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'));
+          'Basic ${base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'))}';
       http.Response response =
           await http.get(Uri.parse("$API_URL/customers/${username.split('@').last.trim()}/children/"), headers: <String, String>{'authorization': basicAuth});
 
@@ -97,7 +58,12 @@ class _MyHomePageState extends State<MyHomePage> {
         // print("abcccc : $abc");
         for (var i = 0; i < response.body.length; i++) {
           musteriler.add({"value": abc[i]['name'].toString(), "id": abc[i]['id'].toString(), "parent": abc[i]['parent'].toString()});
+
+          Constants.MusteriList = musteriler;
+
           newMusteriler = musteriler;
+          // print(musteriler);
+          // print(Constants.MusteriList);
         }
       } else {
         // print('başarısızmain');
@@ -117,30 +83,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-/* ---------------------------------------------------------------------------- */
-//TODOs                                 INIT                                  */
-/* ---------------------------------------------------------------------------- */
-
   @override
   void initState() {
     super.initState();
     getCustomersApi();
   }
 
-/* ---------------------------------------------------------------------------- */
-//TODOs              CHECK COSTUMER IS SELECTED FUNCTION                      */
-/* ---------------------------------------------------------------------------- */
-
+  //Müşterileri getiren API
   void navigateToDeviceListPage() {
     if (selectedCustomer != null) {
       // print("AAAAAAAAAAAAAAAA1 : ${selectedCustomer['id'].toString()}");
       // print("AAAAAAAAAAAAAAAA2 : ${selectedCustomer['value'].toString()}");
       // print("AAAAAAAAAAAAAAAA3 : ${selectedCustomer['parent'].toString()}");
       Constants.musteri = selectedCustomer['id'].toString();
+      getDeviceListsApi();
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => QrDeviceListPage(
+              builder: (BuildContext context) => DeviceListPage(
                     selectedCustomer: selectedCustomer['value'].toString(),
                   )),
           (Route<dynamic> route) => false);
@@ -165,9 +125,48 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-/* ---------------------------------------------------------------------------- */
-//TODOs                            FILTER                                     */
-/* ---------------------------------------------------------------------------- */
+  void getDeviceListsApi() async {
+    setState(() {
+      //cihaz listesi yüklenirkenki indicator
+      isFirstLoading = true;
+    });
+    prefs = await SharedPreferences.getInstance();
+    try {
+      String username = controller.usernameController.value.toString();
+      String password = controller.passwordController.value.toString();
+
+      String basicAuth = 'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+      http.Response response = await http
+          .post(Uri.parse("$API_URL/device-list/"), headers: <String, String>{'authorization': basicAuth}, body: {'tenant': Constants.musteri.toString()});
+
+      // print("response.body :  ${response.body}");
+      //print("response.bodyBytes :  ${response.bodyBytes}");
+
+      if (response.statusCode == 200) {
+        var abc = jsonDecode(utf8.decode(response.bodyBytes));
+        // var devices = abc['devices'];
+        // print("devices:  $devices");
+
+        // print("abc  :  $abc");
+        for (var i = 0; i < response.body.length; i++) {
+          gonderilmisCihazlar.add({"value": abc['devices'][i]['device_id'].toString(), "id": abc['devices'][i]['owner_id'].toString()});
+          // print("gonderilmisCihazlar : $gonderilmisCihazlar");
+          Constants.gonderilmisCihazList = gonderilmisCihazlar;
+        }
+      } else {
+        // print('başarısız Gönderilmiş Cihaz Listesi');
+        prefs!.clear();
+        Get.to(const ActionChoosePage());
+      }
+    } catch (e) {
+      // print(e.toString());
+    }
+    if (mounted) {
+      setState(() {
+        isFirstLoading = false;
+      });
+    }
+  }
 
   searchValue(String query) {
     final filteredValues = musteriler.where((element) {
@@ -179,32 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-/* ---------------------------------------------------------------------------- */
-//TODOs                          CONTROLLER                                   */
-/* ---------------------------------------------------------------------------- */
-  final controller = Get.put(MainController());
   TextEditingController searchController = TextEditingController();
-
-/* ---------------------------------------------------------------------------- */
-//TODOs                          EXIT POP UP                                  */
-/* ---------------------------------------------------------------------------- */
-
-  Future<bool> showExitPopupHandle() => showExitPopup(context);
-
-/* ---------------------------------------------------------------------------- */
-//TODOs                         SECİLEN MUSTERİ                               */
-/* ---------------------------------------------------------------------------- */
-
-  void handleItemSelected(selectedItem) {
-    setState(() {
-      selectedCustomer = selectedItem;
-    });
-    // print('Seçilen öğe: $selectedItem');
-  }
-
-/* ---------------------------------------------------------------------------- */
-//TODOs                               BUILD                                   */
-/* ---------------------------------------------------------------------------- */
 
   @override
   Widget build(BuildContext context) {
@@ -279,13 +253,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               left: 2.0.wp,
                               child: IconButton(
                                   onPressed: () {
-                                    // print("sevk mustertisi seç sayfasında back button tıklandı");
+                                    // print("iade mustertisi seç sayfasında back button tıklandı");
                                     Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const ActionChoosePage(),
-                                        ),
-                                        (route) => false);
+                                      context,
+                                      MaterialPageRoute(builder: (BuildContext context) => const ActionChoosePage()),
+                                      (Route<dynamic> route) => false,
+                                    );
                                   },
                                   icon: const Icon(
                                     Icons.arrow_back,
@@ -350,9 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 itemCount: newMusteriler.length,
                                 itemBuilder: (context, index) {
                                   final item = newMusteriler[index];
-                                  // print("item ${item}");
-                                  // print(musteriler);
-                                  // print(Constants.MusteriList);
+                                  // print("item $item");
                                   if (selectedCustomer != null && selectedCustomer['value'].toString() == item['value'].toString()) {
                                     return Card(
                                       margin: const EdgeInsets.only(bottom: 5),
@@ -415,9 +386,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(margin: const EdgeInsets.only(right: 5), child: const Text("Cihaz Ekle")),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 4.0.wp),
+                                    child: const Text("Devam Et"),
+                                  ),
+                                  SizedBox(
+                                    width: 2.0.wp,
+                                  ),
                                   const Icon(
-                                    Icons.add,
+                                    Icons.arrow_circle_right_outlined,
                                   )
                                 ],
                               )),
@@ -432,5 +409,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  void handleItemSelected(selectedItem) {
+    setState(() {
+      selectedCustomer = selectedItem;
+    });
+    // print('Seçilen öğe: $selectedItem');
   }
 }

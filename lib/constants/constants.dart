@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:carpex_stok_takibi/constants/data_helpar.dart';
+import 'package:carpex_cihaz_sevk/constants/data_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../page/login_page.dart';

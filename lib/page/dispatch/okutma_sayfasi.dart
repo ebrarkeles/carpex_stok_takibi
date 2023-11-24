@@ -2,20 +2,19 @@
 
 import 'dart:convert';
 
-import 'package:carpex_stok_takibi/constants/utils/on_wii_pop.dart';
+import 'package:carpex_cihaz_sevk/constants/utils/on_will_pop.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/constants.dart';
-import '../../constants/data_helpar.dart';
-import 'package:http/http.dart' as http;
-
+import '../../constants/data_helper.dart';
 import '../../constants/urls.dart';
 import 'qr_device_list_page.dart';
 
 class QRScannerPage extends StatefulWidget {
-  const QRScannerPage({Key? key}) : super(key: key);
+  const QRScannerPage({super.key});
 
   @override
   _QRScannerPageState createState() => _QRScannerPageState();
@@ -30,7 +29,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
   QRViewController? controller;
   bool scanningSuccessful = false;
   String scannedDevice = '';
-  bool isQrStcokControlStatus = false;
+  bool isQrStokControlStatus = false;
   SharedPreferences? prefs;
 
 /*----------------------------------------------------------------------------*/
@@ -58,13 +57,12 @@ class _QRScannerPageState extends State<QRScannerPage> {
           scannedDevice = scanData.code!;
           if (!scannedDevice.startsWith("CRP-")) {
             scannedDevice = "CRP-$scannedDevice";
-            print("cihaz kodunda CRP- bulunmuyordu eklendi.");
+            // print("cihaz kodunda CRP- bulunmuyordu eklendi.");
           } else {
-            print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
+            // print("cihaz kodunda CRP- bulunuyor eklenmeyecek.");
           }
           showSnackBar('Qr okundu: $scannedDevice');
-          print(
-              "1111111111111111111111111111111scannedDevice : $scannedDevice");
+          // print("1111111111111111111111111111111scannedDevice : $scannedDevice");
         }
       });
     });
@@ -75,58 +73,50 @@ class _QRScannerPageState extends State<QRScannerPage> {
 /*----------------------------------------------------------------------------*/
 
   void addTooList() async {
-    print('addTooList ÇALIŞTI');
+    // print('addTooList ÇALIŞTI');
 
     setState(() {
-      isQrStcokControlStatus = true;
+      isQrStokControlStatus = true;
     });
     prefs = await SharedPreferences.getInstance();
 
-    print('prefs.get("username") ${prefs!.get("username")}');
-    print('prefs.get("password") ${prefs!.get("password")}');
+    // print('prefs.get("username") ${prefs!.get("username")}');
+    // print('prefs.get("password") ${prefs!.get("password")}');
 
     String username = prefs!.get("username").toString();
-    String deviceId =
-        scannedDevice.replaceAll(' ', '').toUpperCase().toString();
+    String deviceId = scannedDevice.replaceAll(' ', '').toUpperCase().toString();
 
     !deviceId.startsWith("CRP-") ? "CRP-$deviceId" : deviceId;
 
-    var body = {
-      "owner_id": username.split('@').last.trim(),
-      "device_id": deviceId
-    };
+    var body = {"owner_id": username.split('@').last.trim(), "device_id": deviceId};
 
-    print("body1 : $body");
-    print("body2 : ${json.encode(body)}");
+    // print("body1 : $body");
+    // print("body2 : ${json.encode(body)}");
 
     try {
-      String basicAuth =
-          'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
-      print(basicAuth);
+      String basicAuth = 'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
+      // print(basicAuth);
 
-      http.Response response = await http.post(
-          Uri.parse("$API_URL/device-stock-control/"),
-          body: json.encode(body),
-          headers: <String, String>{
-            'authorization': basicAuth,
-            'Content-Type': 'application/json; charset=UTF-8',
-          });
+      http.Response response = await http.post(Uri.parse("$API_URL/device-stock-control/"), body: json.encode(body), headers: <String, String>{
+        'authorization': basicAuth,
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
 
       if (response.statusCode == 200) {
         //buraya bak
-        print("11111111111dene ${response.body.toString()}");
-        print("11111111111deneeee ${response.bodyBytes.toString()}");
+        // print("11111111111dene ${response.body.toString()}");
+        // print("11111111111deneeee ${response.bodyBytes.toString()}");
         var abc = jsonDecode(utf8.decode(response.bodyBytes));
-        print("22222deneee ${abc['status']}");
-        print("22222deneee ${abc['status'].runtimeType}");
+        // print("22222deneee ${abc['status']}");
+        // print("22222deneee ${abc['status'].runtimeType}");
 
         if (abc['status'] == true) {
-          print('BU CİHAZ STOKTA VAR. LİSTEYE EKLİYORUM');
-          print('_addDeviceToCihazlar FONKSİYNU ÇALIŞIYOR');
+          // print('BU CİHAZ STOKTA VAR. LİSTEYE EKLİYORUM');
+          // print('_addDeviceToCihazlar FONKSİYNU ÇALIŞIYOR');
 
           _addDeviceToCihazlar(scannedDevice);
         } else {
-          print('BU CİHAZ STOKTA YOOOOOOOOKKKKKK');
+          // print('BU CİHAZ STOKTA YOOOOOOOOKKKKKK');
 
           ScaffoldMessenger.of(context).removeCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -154,13 +144,13 @@ class _QRScannerPageState extends State<QRScannerPage> {
           );
         }
       } else {
-        print("server'da değilsin");
+        // print("server'da değilsin");
       }
     } catch (e) {
-      print('EEEEEEEeeeeeeee e.toString():${e.toString()}');
+      // print('EEEEEEEeeeeeeee e.toString():${e.toString()}');
     }
     setState(() {
-      isQrStcokControlStatus = false;
+      isQrStokControlStatus = false;
     });
   }
 
@@ -169,14 +159,13 @@ class _QRScannerPageState extends State<QRScannerPage> {
 /*----------------------------------------------------------------------------*/
 
   void _addDeviceToCihazlar(String deviceCode) {
-    print('CİHAZ LİSTEYE DAHA ÖNCE EKLENİŞ Mİ BAKIYORUM');
+    // print('CİHAZ LİSTEYE DAHA ÖNCE EKLENİŞ Mİ BAKIYORUM');
     // Kontrol ett cihazın var mı
-    bool isDeviceExists = Constants.tumEklenenCihazlar
-        .any((cihaz) => cihaz.cihazKodu == deviceCode);
+    bool isDeviceExists = Constants.tumEklenenCihazlar.any((cihaz) => cihaz.cihazKodu == deviceCode);
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     if (isDeviceExists) {
-      print('Cihaz zaten ekli!!!!!!!!!!!');
+      // print('Cihaz zaten ekli!!!!!!!!!!!');
       // Cihaz zaten var uyarı snacki göster
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -200,13 +189,13 @@ class _QRScannerPageState extends State<QRScannerPage> {
         ),
       );
     } else {
-      print('CİHAZ LİSTEDE YOK YENİ CİHAZ EKLİYORUM');
+      // print('CİHAZ LİSTEDE YOK YENİ CİHAZ EKLİYORUM');
       // Cihaz yokyeni cihazı ekle
       Cihaz newDevice = Cihaz(deviceCode);
       setState(() {
         Constants.tumEklenenCihazlar.add(newDevice);
       });
-      print('EKLEDİM');
+      // print('EKLEDİM');
       // EKLENDİ snacki göster
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -298,9 +287,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => QrDeviceListPage(
-                            selectedCustomer: Constants.musteri)),
+                    MaterialPageRoute(builder: (BuildContext context) => QrDeviceListPage(selectedCustomer: Constants.musteri)),
                     (Route<dynamic> route) => false);
               },
               icon: const Icon(
@@ -338,45 +325,28 @@ class _QRScannerPageState extends State<QRScannerPage> {
                             ),
                             const Text(
                               'Okunan Cihaz ',
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 17, color: Colors.black87, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
                             TextField(
-                              controller: TextEditingController(
-                                  text: scannedDevice.isNotEmpty
-                                      ? scannedDevice
-                                          .replaceAll(' ', '')
-                                          .toString()
-                                      : ""),
+                              controller: TextEditingController(text: scannedDevice.isNotEmpty ? scannedDevice.replaceAll(' ', '').toString() : ""),
                               readOnly: true,
                               autofocus: true,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                              style: const TextStyle(
-                                  fontSize: 16.0,
-                                  color: Color.fromARGB(255, 54, 58, 61),
-                                  fontWeight: FontWeight.bold),
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              style: const TextStyle(fontSize: 16.0, color: Color.fromARGB(255, 54, 58, 61), fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                               smartDashesType: SmartDashesType.enabled,
                               smartQuotesType: SmartQuotesType.enabled,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: Colors.white,
-                                contentPadding: const EdgeInsets.only(
-                                    left: 14.0, bottom: 18.0, top: 18.0),
+                                contentPadding: const EdgeInsets.only(left: 14.0, bottom: 18.0, top: 18.0),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color:
-                                          Color.fromARGB(118, 189, 198, 207)),
+                                  borderSide: const BorderSide(color: Color.fromARGB(118, 189, 198, 207)),
                                   borderRadius: BorderRadius.circular(25.7),
                                 ),
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      const BorderSide(color: Colors.white),
+                                  borderSide: const BorderSide(color: Colors.white),
                                   borderRadius: BorderRadius.circular(25.7),
                                 ),
                               ),
@@ -386,12 +356,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                             ),
                             const Text(
                               "*Etkili bir okuma yapabilmek için cihazın QR kodu doğrultusunda ileri-geri hareket ettirilmesi gerekir.",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black54,
-                                  fontStyle: FontStyle.italic,
-                                  fontFamily: ""),
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black54, fontStyle: FontStyle.italic, fontFamily: ""),
                               textAlign: TextAlign.center,
                             )
                           ],
@@ -399,8 +364,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                       ],
                     ),
                     Container(
-                      margin: const EdgeInsets.only(
-                          left: 10, right: 10, bottom: 10),
+                      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -413,30 +377,22 @@ class _QRScannerPageState extends State<QRScannerPage> {
                                   backgroundColor: Colors.white,
                                 ),
                                 onPressed: () {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                   Navigator.pushAndRemoveUntil(
                                       context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              QrDeviceListPage(
-                                                  selectedCustomer:
-                                                      Constants.musteri)),
+                                      MaterialPageRoute(builder: (BuildContext context) => QrDeviceListPage(selectedCustomer: Constants.musteri)),
                                       (Route<dynamic> route) => false);
                                 },
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.arrow_back,
-                                        color: Colors.black87),
+                                    const Icon(Icons.arrow_back, color: Colors.black87),
                                     Container(
                                         margin: const EdgeInsets.only(left: 6),
                                         child: const Text(
                                           "Listeye Dön",
-                                          style: TextStyle(
-                                              color: Colors.black87,
-                                              fontWeight: FontWeight.w500),
+                                          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500),
                                         )),
                                   ],
                                 ),
@@ -452,22 +408,19 @@ class _QRScannerPageState extends State<QRScannerPage> {
                                   backgroundColor: Constants.themeColor,
                                 ),
                                 onPressed: () {
-                                  print('CİHAZ EKLE BUTONUNA TIKLANDI!!!!!!!!');
-                                  if (scannedDevice.length != 0) {
-                                    print(
-                                        'SCANNEDDEVİCES BOŞ DEĞİL ${scannedDevice}');
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
+                                  // print('CİHAZ EKLE BUTONUNA TIKLANDI!!!!!!!!');
+                                  if (scannedDevice.isNotEmpty) {
+                                    // print('SCANNEDDEVİCES BOŞ DEĞİL $scannedDevice');
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                     //_addDeviceToCihazlar(scannedDevice);
-                                    print('addTooList ÇALIŞACAK');
+                                    // print('addTooList ÇALIŞACAK');
                                     addTooList();
                                   } else {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
                                         title: const Text('Uyarı'),
-                                        content: const Text(
-                                            'Eklemek için taranan bir cihaz kodu yok.'),
+                                        content: const Text('Eklemek için taranan bir cihaz kodu yok.'),
                                         actions: [
                                           TextButton(
                                             onPressed: () {
@@ -484,9 +437,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Container(
-                                        margin: const EdgeInsets.only(right: 6),
-                                        child: const Text("Cihazı Ekle")),
+                                    Container(margin: const EdgeInsets.only(right: 6), child: const Text("Cihazı Ekle")),
                                     const Icon(Icons.add),
                                   ],
                                 ),
@@ -499,7 +450,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                   ],
                 ),
               ),
-              isQrStcokControlStatus == true
+              isQrStokControlStatus == true
                   ? Container(
                       color: Colors.white54,
                       alignment: Alignment.center,

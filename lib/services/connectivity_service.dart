@@ -1,4 +1,4 @@
-import 'package:carpex_stok_takibi/constants/fonts.dart';
+import 'package:carpex_cihaz_sevk/constants/fonts.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -17,8 +17,7 @@ class ConnectivityService {
           'Message',
           titleText: Text(
             'İnternet',
-            style: TextStyle(
-                color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           messageText: Text(
@@ -41,19 +40,15 @@ class ConnectivityService {
     });
 
     /// listen to internet connection change
-    Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) async {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
       if (result == ConnectivityResult.none) {
-        if (connectivityResult == ConnectivityResult.wifi ||
-            connectivityResult == ConnectivityResult.mobile) {
+        if (connectivityResult == ConnectivityResult.wifi || connectivityResult == ConnectivityResult.mobile) {
           Get.snackbar(
             'Title',
             'Message',
             titleText: Text(
               'İnternet',
-              style: TextStyle(
-                  color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             messageText: Text(
@@ -71,8 +66,7 @@ class ConnectivityService {
             dismissDirection: DismissDirection.none,
           );
         }
-      } else if (result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile) {
+      } else if (result == ConnectivityResult.wifi || result == ConnectivityResult.mobile) {
         if (connectivityResult == ConnectivityResult.none) {
           // close previously opened snackbar's
           Get.closeAllSnackbars();
@@ -82,8 +76,7 @@ class ConnectivityService {
             'Message',
             titleText: Text(
               'İnternet ',
-              style: TextStyle(
-                  color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             messageText: Text(
@@ -97,8 +90,7 @@ class ConnectivityService {
             backgroundColor: greenColor,
             showProgressIndicator: true,
             progressIndicatorBackgroundColor: white,
-            progressIndicatorValueColor:
-                const AlwaysStoppedAnimation<Color>(greenColor),
+            progressIndicatorValueColor: const AlwaysStoppedAnimation<Color>(greenColor),
             snackPosition: SnackPosition.BOTTOM,
           );
         }
