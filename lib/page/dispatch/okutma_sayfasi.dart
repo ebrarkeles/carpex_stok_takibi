@@ -427,7 +427,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                                     Container(
                                         margin: const EdgeInsets.only(left: 6),
                                         child: const Text(
-                                          "Yeni Ciha Okut",
+                                          "Yeni Cihaz Okut",
                                           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500),
                                         )),
                                   ],
