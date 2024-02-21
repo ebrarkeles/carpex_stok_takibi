@@ -46,9 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       // print("AAAAAAAAAAA ${controller.usernameController.value.toString()}");
       // print("BBBBBBBBBBB ${controller.passwordController.value.toString()}");
-      http.Response response = await http.post(Uri.parse("$API_URL/login/"),
-          body: {'username': controller.usernameController.value.toString(), 'password': controller.passwordController.value.toString()});
-      // print("1111 ${response.body}");
+      http.Response response = await http.post(Uri.parse("$API_URL/login/"), body: {'username': controller.usernameController.value.toString(), 'password': controller.passwordController.value.toString()});
 
       if (response.statusCode == 200) {
         if (controller.rememberMe.value == true) {
@@ -56,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           _clearLoginInfo();
         }
-
+        controller.usernameController.value = response.body.replaceAll('"', '');
         // prefs.setString("username", controller.usernameController.value.text.toString());
         // prefs.setString("password", controller.passwordController.value.text.toString());
         showDialog(
@@ -172,9 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.white,
                       height: 70,
                       width: MediaQuery.of(context).size.width,
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: Text("Cihaz Sevk", style: TextStyle(fontSize: 25, color: Constants.themeColor, fontWeight: FontWeight.bold))),
+                      child: Align(alignment: Alignment.center, child: Text("Cihaz Sevk", style: TextStyle(fontSize: 25, color: Constants.themeColor, fontWeight: FontWeight.bold))),
                     )
                   ],
                 ),

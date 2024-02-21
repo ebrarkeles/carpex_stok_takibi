@@ -78,7 +78,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
       // print(basicAuth);
 
       http.Response response = await http.post(Uri.parse("$API_URL/device-transaction/"), body: json.encode(body), headers: <String, String>{
-        'authorization': basicAuth,
+        // 'authorization': basicAuth,
         'Content-Type': 'application/json; charset=UTF-8',
       });
 
@@ -86,7 +86,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
 
       if (response.statusCode == 200) {
         // print("2222222222 ${response.body}");
-        Get.to(const FinishPage());
+        Get.to(() => const FinishPage());
         Constants.tumEklenenCihazlar.clear();
       } else {
         // print('başarısızqr');
@@ -241,7 +241,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
               ),
               leading: IconButton(
                 onPressed: () {
-                  Get.to(const MyHomePage());
+                  Get.to(() => const MyHomePage());
                   Constants.tumEklenenCihazlar.clear();
                 },
                 icon: const Icon(
@@ -304,8 +304,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                                           backgroundColor: Colors.green[400],
                                         ),
                                         onPressed: () {
-                                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const QRScannerPage()),
-                                              (Route<dynamic> route) => false);
+                                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const QRScannerPage()), (Route<dynamic> route) => false);
                                         },
                                         child: Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,

@@ -45,8 +45,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        color: Constants.themeColor, borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+                    decoration: BoxDecoration(color: Constants.themeColor, borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 7.0.wp),
                       child: Stack(children: [
@@ -121,9 +120,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                               () => Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white70,
-                                  border: controller.isSevk.value == true
-                                      ? Border.all(color: Colors.green, width: 5)
-                                      : Border.all(color: Colors.transparent, width: 5),
+                                  border: controller.isSevk.value == true ? Border.all(color: Colors.green, width: 5) : Border.all(color: Colors.transparent, width: 5),
                                 ),
                                 width: 19.5.hp,
                                 child: Column(
@@ -156,9 +153,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                               () => Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white70,
-                                  border: controller.isIade.value == true
-                                      ? Border.all(color: Colors.green, width: 5)
-                                      : Border.all(color: Colors.transparent, width: 5),
+                                  border: controller.isIade.value == true ? Border.all(color: Colors.green, width: 5) : Border.all(color: Colors.transparent, width: 5),
                                 ),
                                 width: 19.5.hp,
                                 child: Column(
@@ -196,9 +191,7 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
                             height: 7.0.hp,
                             width: 65.0.wp,
                             decoration: BoxDecoration(
-                              color: controller.isIade.value == true || controller.isSevk.value == true
-                                  ? Constants.themeColor
-                                  : Constants.themeColor.withOpacity(0.4),
+                              color: controller.isIade.value == true || controller.isSevk.value == true ? Constants.themeColor : Constants.themeColor.withOpacity(0.4),
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: const Center(
@@ -221,14 +214,9 @@ class _ActionChoosePageState extends State<ActionChoosePage> {
 
   islemSecFunction() {
     if (controller.isIade.value == true) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MusteriSec(),
-          ),
-          (route) => false);
+      Get.to(() => const MusteriSec());
     } else if (controller.isSevk.value == true) {
-      Get.to(const MyHomePage());
+      Get.to(() => const MyHomePage());
     } else if (controller.isIade.value == false || controller.isSevk.value == false) {}
   }
 }

@@ -152,7 +152,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
               ),
               leading: IconButton(
                 onPressed: () {
-                  Get.to(const MusteriSec());
+                  Get.to(() => const MusteriSec());
                   Constants.tumEklenenCihazlar.clear();
                 },
                 icon: const Icon(
@@ -252,8 +252,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
                                           backgroundColor: Colors.green[400],
                                         ),
                                         onPressed: () {
-                                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const ReturnQrScanPage()),
-                                              (Route<dynamic> route) => false);
+                                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const ReturnQrScanPage()), (Route<dynamic> route) => false);
                                         },
                                         child: Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -377,7 +376,7 @@ class _DeviceListPageState extends State<DeviceListPage> {
                     onPressed: () => sendDevicesApi(),
                     //return true when click on "Yes"
                     child: SizedBox(
-                      width: 100,
+                      // width: 100,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,

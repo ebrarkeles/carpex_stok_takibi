@@ -82,7 +82,7 @@ class _SentDevicesListState extends State<SentDevicesList> {
       } else {
         // print('başarısız Gönderilmiş Cihaz Listesi');
         prefs!.clear();
-        Get.to(const LoginPage());
+        Get.to(() => const LoginPage());
       }
     } catch (e) {
       // print(e.toString());

@@ -91,7 +91,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
       // print(basicAuth);
 
       http.Response response = await http.post(Uri.parse("$API_URL/device-stock-control/"), body: json.encode(body), headers: <String, String>{
-        'authorization': basicAuth,
+        // 'authorization': basicAuth,
         'Content-Type': 'application/json; charset=UTF-8',
       });
 
