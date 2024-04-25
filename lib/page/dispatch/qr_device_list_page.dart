@@ -74,7 +74,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     // print("body1 : $body");
     // print("body2 : ${json.encode(body)}");
     try {
-      String basicAuth = 'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
+      // String basicAuth = 'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
       // print(basicAuth);
 
       http.Response response = await http.post(Uri.parse("$API_URL/device-transaction/"), body: json.encode(body), headers: <String, String>{
@@ -304,7 +304,8 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
                                           backgroundColor: Colors.green[400],
                                         ),
                                         onPressed: () {
-                                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const QRScannerPage()), (Route<dynamic> route) => false);
+                                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const QRScannerPage()),
+                                              (Route<dynamic> route) => false);
                                         },
                                         child: Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,

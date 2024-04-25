@@ -1,14 +1,17 @@
 // ignore_for_file: use_build_context_synchronously, unused_import, avoid_print
 
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:carpex_cihaz_sevk/constants/constants.dart';
+import 'package:carpex_cihaz_sevk/constants/fonts.dart';
 import 'package:carpex_cihaz_sevk/controller/mainController.dart';
 import 'package:carpex_cihaz_sevk/main.dart';
 import 'package:carpex_cihaz_sevk/page/action_choose_page/action_choose_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,6 +42,28 @@ class _LoginPageState extends State<LoginPage> {
     _textEditingController1 = TextEditingController();
     _textEditingController2 = TextEditingController();
     _loadRememberMe();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      controller.appVersion.value = packageInfo.version;
+    });
+  }
+
+  String _replaceTurkishCharacters(String input) {
+    return input
+        .replaceAll('Ä°', 'İ')
+        .replaceAll('ÅŸ', 'ş')
+        .replaceAll('ÄŸ', 'ğ')
+        .replaceAll('Ã¼', 'ü')
+        .replaceAll('Ã§', 'ç')
+        .replaceAll('Ã¶', 'ö')
+        .replaceAll('Ä±', 'ı')
+        .replaceAll('Ã‡', 'Ç')
+        .replaceAll('Ã–', 'Ö')
+        .replaceAll('Ãœ', 'Ü')
+        .replaceAll('Åž', 'Ş')
+        .replaceAll('Äž', 'Ğ')
+        .replaceAll('"', '');
   }
 
   void login() async {
@@ -46,7 +71,10 @@ class _LoginPageState extends State<LoginPage> {
     try {
       // print("AAAAAAAAAAA ${controller.usernameController.value.toString()}");
       // print("BBBBBBBBBBB ${controller.passwordController.value.toString()}");
-      http.Response response = await http.post(Uri.parse("$API_URL/login/"), body: {'username': controller.usernameController.value.toString(), 'password': controller.passwordController.value.toString()});
+      http.Response response = await http.post(
+        Uri.parse("$API_URL/login/"),
+        body: {'username': controller.usernameController.value.toString(), 'password': controller.passwordController.value.toString()},
+      );
 
       if (response.statusCode == 200) {
         if (controller.rememberMe.value == true) {
@@ -54,9 +82,15 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           _clearLoginInfo();
         }
-        controller.usernameController.value = response.body.replaceAll('"', '');
+
+        // replace turkish characters, remove string quotes
+        String responseBody = _replaceTurkishCharacters(response.body);
+
+        controller.usernameController.value = responseBody;
+
         // prefs.setString("username", controller.usernameController.value.text.toString());
         // prefs.setString("password", controller.passwordController.value.text.toString());
+
         showDialog(
             barrierDismissible: false,
             context: context,
@@ -170,7 +204,9 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.white,
                       height: 70,
                       width: MediaQuery.of(context).size.width,
-                      child: Align(alignment: Alignment.center, child: Text("Cihaz Sevk", style: TextStyle(fontSize: 25, color: Constants.themeColor, fontWeight: FontWeight.bold))),
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Text("Cihaz Sevk", style: TextStyle(fontSize: 25, color: Constants.themeColor, fontWeight: FontWeight.bold))),
                     )
                   ],
                 ),
@@ -336,7 +372,23 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-              )
+              ),
+              const Spacer(),
+
+              // app version
+              Obx(
+                () => Padding(
+                  padding: const EdgeInsets.only(bottom: 40.0),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'v${controller.appVersion.value}',
+                      style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

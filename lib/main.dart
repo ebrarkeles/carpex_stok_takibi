@@ -89,8 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // print('uername : $username');
 
-      String basicAuth =
-          'Basic ' + base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'));
+      // String basicAuth = 'Basic ' + base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'));
       http.Response response = await http.get(Uri.parse("$API_URL/customers/${username.split('@').last.trim().replaceAll('"', "")}/children/"));
 
       if (response.statusCode == 200) {
