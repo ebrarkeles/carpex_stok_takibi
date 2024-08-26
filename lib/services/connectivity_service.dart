@@ -17,12 +17,12 @@ class ConnectivityService {
           'Message',
           titleText: Text(
             'İnternet',
-            style: TextStyle(color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(color: white, fontSize: 14.0.sp, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           messageText: Text(
             'İnternet bağlantınız yok..',
-            style: TextStyle(color: white, fontSize: 14.0.sp),
+            style: TextStyle(color: white, fontSize: 12.0.sp),
             textAlign: TextAlign.center,
           ),
           borderRadius: 0.0,
@@ -48,12 +48,12 @@ class ConnectivityService {
             'Message',
             titleText: Text(
               'İnternet',
-              style: TextStyle(color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(color: white, fontSize: 14.0.sp, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             messageText: Text(
               'İnternet bağlantınız yok..',
-              style: TextStyle(color: white, fontSize: 14.0.sp),
+              style: TextStyle(color: white, fontSize: 12.0.sp),
               textAlign: TextAlign.center,
             ),
             borderRadius: 0.0,
@@ -76,12 +76,12 @@ class ConnectivityService {
             'Message',
             titleText: Text(
               'İnternet ',
-              style: TextStyle(color: white, fontSize: 16.0.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(color: white, fontSize: 14.0.sp, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             messageText: Text(
               'İnternete bağlanıyor..',
-              style: TextStyle(color: white, fontSize: 14.0.sp),
+              style: TextStyle(color: white, fontSize: 12.0.sp),
               textAlign: TextAlign.center,
             ),
             borderRadius: 0.0,

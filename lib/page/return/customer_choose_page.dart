@@ -48,10 +48,8 @@ class _MusteriSecState extends State<MusteriSec> {
     try {
       String username = controller.usernameController.value.toString();
 
-      String basicAuth =
-          'Basic ${base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'))}';
-      http.Response response =
-          await http.get(Uri.parse("$API_URL/customers/${username.split('@').last.trim()}/children/"), headers: <String, String>{'authorization': basicAuth});
+      String basicAuth = 'Basic ${base64.encode(utf8.encode('${controller.usernameController.value.toString()}:${controller.passwordController.value.toString()}'))}';
+      http.Response response = await http.get(Uri.parse("$API_URL/customers/${username.split('@').last.trim()}/children/"), headers: <String, String>{'authorization': basicAuth});
 
       if (response.statusCode == 200) {
         var abc = jsonDecode(utf8.decode(response.bodyBytes));
@@ -136,8 +134,7 @@ class _MusteriSecState extends State<MusteriSec> {
       String password = controller.passwordController.value.toString();
 
       String basicAuth = 'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-      http.Response response = await http
-          .post(Uri.parse("$API_URL/device-list/"), headers: <String, String>{'authorization': basicAuth}, body: {'tenant': Constants.musteri.toString()});
+      http.Response response = await http.post(Uri.parse("$API_URL/device-list/"), headers: <String, String>{'authorization': basicAuth}, body: {'tenant': Constants.musteri.toString()});
 
       // print("response.body :  ${response.body}");
       //print("response.bodyBytes :  ${response.bodyBytes}");
@@ -156,7 +153,7 @@ class _MusteriSecState extends State<MusteriSec> {
       } else {
         // print('başarısız Gönderilmiş Cihaz Listesi');
         prefs!.clear();
-        Get.to(const ActionChoosePage());
+        Get.to(() => const ActionChoosePage());
       }
     } catch (e) {
       // print(e.toString());

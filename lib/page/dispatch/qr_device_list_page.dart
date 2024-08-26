@@ -74,11 +74,11 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
     // print("body1 : $body");
     // print("body2 : ${json.encode(body)}");
     try {
-      String basicAuth = 'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
+      // String basicAuth = 'Basic ${base64.encode(utf8.encode('${prefs!.get("username").toString()}:${prefs!.get("password").toString()}'))}';
       // print(basicAuth);
 
       http.Response response = await http.post(Uri.parse("$API_URL/device-transaction/"), body: json.encode(body), headers: <String, String>{
-        'authorization': basicAuth,
+        // 'authorization': basicAuth,
         'Content-Type': 'application/json; charset=UTF-8',
       });
 
@@ -86,7 +86,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
 
       if (response.statusCode == 200) {
         // print("2222222222 ${response.body}");
-        Get.to(const FinishPage());
+        Get.to(() => const FinishPage());
         Constants.tumEklenenCihazlar.clear();
       } else {
         // print('başarısızqr');
@@ -241,7 +241,7 @@ class _QrDeviceListPageState extends State<QrDeviceListPage> {
               ),
               leading: IconButton(
                 onPressed: () {
-                  Get.to(const MyHomePage());
+                  Get.to(() => const MyHomePage());
                   Constants.tumEklenenCihazlar.clear();
                 },
                 icon: const Icon(

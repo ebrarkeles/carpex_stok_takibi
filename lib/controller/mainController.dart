@@ -32,4 +32,5 @@ class MainController extends GetxController {
   }
 
   var gonderilmisCihazlar = [].obs;
+  RxString appVersion = ''.obs;
 }
